@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>我的业绩</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+          body{
+            background-color: #fff;
+          }
+          #header{
+            width: 100%;
+            height: 44px;
+            background-color: rgb(212,157,59);
+          }
+          .alert{
+            font-size: 0.55rem;
+            text-align: center;
+            height: 5rem;
+            line-height: 5rem;
+            background-color: #fff;
+          }
+          .money {
+            width: 100%;
+            height: 10rem;
+            background-color: #fff;
+            background-image: url(../image/my/my_jiangjin_bg.png);
+            background-size: cover;
+          }
+          .line{
+            width: 100%;
+            height: 0.3rem;
+            background-color: rgba(212,157,59,0.16);
+          }
+          .yue {
+            width: 3.25rem;
+            margin: 0 auto;
+            padding-top: 1.6rem;
+          }
+          .yue img {
+            width: 100%;
+          }
+          .yue p{
+            text-align: center;
+            height: 1.5rem;
+            line-height: 1.5rem;
+            font-size: 0.65rem;
+            color:rgba(0,0,0,1);
+          }
+          .money-num {
+            width: 50%;
+            height: 2rem;
+            line-height: 2rem;
+            margin: 0 auto;
+            text-align: center;
+            color:rgba(0,0,0,1)
+          }
+          .money-num span:nth-child(1){
+            font-size: 24px;
+          }
+
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-pull-left aui-btn" onclick="api.closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">我的业绩</div>
+      </header>
+      <section class="money">
+        <div class="yue">
+          <img src="../image/my/my_jiangjin.png">
+          <p>我的总业绩</p>
+        </div>
+        <div class="money-num"><span>{{money || 0}}元</span></div>
+      </section>
+      <div class="aui-content">
+        <ul class="aui-list aui-list-in">
+          <li class="aui-list-header">业绩明细</li>
+        </ul>
+      </div>
+      <div class="aui-content">
+        <ul class="aui-list aui-media-list">
+          <li class="aui-list-item" v-for="it in list">
+            <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-text">
+                        <div class="aui-list-item-title" v-text="it.memo" style="color: rgb(212,157,59);"></div>
+                        <div class="aui-list-item-right" v-text="formatDateTime(it.createtime * 1000)"></div>
+                    </div>
+                    <div class="aui-list-item-text aui-ellipsis-2" v-text="it.money + '元'"></div>
+                </div>
+            </div>
+          </li>
+        </ul>
+        <div class="alert" v-if="list.length == 0">暂时没有奖金</div>
+      </div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        $api.fixStatusBar($api.byId('header'));
+        let vue = new Vue({
+          el:"#app",
+          data:{
+            list: [],// 业绩列表
+            money: 0,
+          },
+          mounted: function(){
+            get('user/money_detail').then(res=>{
+              vue.list = res.data;
+              res.data.map(r=>{
+                vue.money += Number(r.money);
+              })
+            })
+          },
+          methods:{
+            formatDateTime: function(inputTime){
+              var date = new Date(inputTime);
+              var date1 = new Date();
+              var y = date.getFullYear();
+              var m = date.getMonth() + 1;
+              m = m < 10 ? ('0' + m) : m;
+              var d = date.getDate();
+              var d1 = date1.getDate();
+              d = d < 10 ? ('0' + d) : d;
+              d1 = d1 < 10 ? ('0' + d1) : d1;
+              var h = date.getHours();
+              h = h < 10 ? ('0' + h) : h;
+              var minute = date.getMinutes();
+              var second = date.getSeconds();
+              minute = minute < 10 ? ('0' + minute) : minute;
+              second = second < 10 ? ('0' + second) : second;
+              if (d1 == d) {
+                return h + ':' + minute;
+              } else if (d1 - d == 1) {
+                return '昨天'
+              }else{
+                return y + '/' + m + '/' + d + ' ' + h + ":" + minute;
+              }
+            },
+          }
+        });
+      };
+  </script>
+  </html>

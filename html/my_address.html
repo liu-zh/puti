@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="format-detection" content="telephone=no" />
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>我的收货地址</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+          body{
+            background-color: #fff;
+          }
+          #header{
+            width: 100%;
+            height: 44px;
+            background-color: rgb(212,157,59);
+          }
+          .list-box{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            margin: 0.5rem auto;
+          }
+          .list {
+            width: 80%;
+            font-size: 15px;
+            /*border-bottom: 1px solid #F0F2F5;*/
+          }
+          .list .name,  .list .address{
+            width: 90%;
+            display: flex;
+            align-items: center;
+            height: 1.5rem;
+            margin: 0 auto;
+          }
+          .list .address{
+            font-size: 0.6rem;
+          }
+          .list .name span:nth-child(1){
+            font-size: 17px;
+            margin-right: 0.7rem;
+          }
+          .type {
+            color:rgba(253,78,100,1);
+            display: inline-block;
+            background-color: rgba(253,78,100,0.2);
+            padding: 0 0.2rem;
+            font-size: 14px;
+          }
+          .bianji{
+            width: 15%;
+            text-align: center;
+            line-height: 1.5rem;
+            height: 1.5rem;
+            border-left: 1px solid rgba(253,78,100,0.2);
+            color: gray;
+            font-size: 0.7rem;
+          }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-pull-left aui-btn" onclick="api.closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">我的收货地址</div>
+        <div class="aui-pull-right aui-btn" @click="openWin('add_address1', true, {type: 0})" style="font-size: 0.7rem;">添加新地址</div>
+      </header>
+      <!-- 我的地址列表 -->
+      <div class="list-box" v-for="it in list">
+        <div class="list" @click="choose_address(it)">
+          <div class="name">
+            <span>{{it.person}}</span>
+            <span>{{it.mobile}}</span>
+          </div>
+          <div class="address">
+            <span v-if="it.type == 1" class="type">默认</span>
+            <span>{{it.city}}{{it.area}}</span>
+          </div>
+        </div>
+        <div class="bianji" @click="openWin('add_address1', true, {type: 1, id: it})">编辑</div>
+      </div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        $api.fixStatusBar($api.byId('header'));
+        var toast = new auiToast();
+        let vue = new Vue({
+          el: "#app",
+          data:{
+            list: null,
+          },
+          methods:{
+            // 获取我的地址信息
+            get_address:function(){
+              get('user/address').then(res=>{
+                vue.list = res.data.reverse();
+              })
+            },
+            // 选择地址
+            choose_address: function(it){
+              if (api.pageParam.type == 0) {
+                api.sendEvent({
+                    name: 'choose_address',
+                    extra: {
+                        list: it,
+                    }
+                });
+                setTimeout(function() {
+                    api.closeWin()
+                }, 500);
+              }
+            },
+          },
+          mounted: function(){
+            this.get_address();
+          }
+        });
+        // 监听添加地址
+        api.addEventListener({
+            name: 'add_address'
+        }, function(ret, err){
+            vue.get_address();
+        });
+
+      };
+  </script>
+  </html>

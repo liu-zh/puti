@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>商城-frame</title>
+      <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+      <style>
+          .list{
+            width: 100%;
+            padding: 0.5rem;
+          }
+          .list .list-box:nth-child(1) {
+            margin-top: 0px;
+            transform: translateY(0.5rem);
+          }
+          .list-box{
+            width: 98%;
+            height: 3rem;
+            border-radius: 0.5rem;
+            background-color: #fff;
+            margin:0.5rem auto 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            transform: translateY(0.5rem);
+          }
+          .list-box-left {
+            display: flex;
+            align-items: center;
+          }
+          .list-box-left img{
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            margin-right: 0.6rem;
+          }
+          .list-box-left>p{
+            color: rgba(6,6,6,1);
+            font-size: 14px;
+          }
+
+          .list-box-middle {
+            font-size:14px;
+            font-weight:500;
+            color:rgba(212,157,59,1);
+          }
+          .list-box-right > div:nth-child(1){
+            width: 3.1rem;
+            height: 1.3rem;
+            background:rgba(212,157,59,1);
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+            font-size: 13px;
+            line-height: 1.3rem;
+          }
+          .list-box-right>div:nth-child(2) {
+            width: 3.1rem;
+            height: 1rem;
+            line-height: 1.5rem;
+            font-size: 11px;
+            color:rgba(6,6,6,1);
+            text-align: center;
+          }
+          .alert{
+            font-size: 0.55rem;
+            text-align: center;
+            height: 5rem;
+            line-height: 5rem;
+            background-color: #fff;
+          }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <div class="list">
+        <div class="list-box" v-for="item in list">
+          <div class="list-box-left">
+            <img :src="item.avatar || '../../image/my/morentouxiang.png'">
+            <p v-text="item.mobile.substr(0,3)+ '****' + item.mobile.substr(7)"></p>
+          </div>
+          <div class="list-box-middle" v-text="'数量：' + item.num + '粒'"></div>
+          <div class="list-box-right">
+            <div @click="openWin('chat_box', true, {id: item})">聊天</div>
+            <div v-text="formatDateTime(item.createtime * 1000)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="alert" v-if="list.length == 0">暂时无挂卖信息</div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript" src="../../script/vue.js"></script>
+  <script type="text/javascript" src="../../script/common.js"></script>
+  <script type="text/javascript" src="../../script/fastclick.js"></script>
+  <script type="text/javascript" src="../../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      FastClick.attach(document.body);
+      apiready = function(){
+        let vue = new Vue({
+          el: "#app",
+          data: {
+            list: [],// 总挂卖的信息
+          },
+          methods: {
+            // 挂卖总信息
+            request: function(){
+              post('guamai/shop').then( res => {
+                vue.list = res.data.lists;
+              });
+            },
+            // 时间戳转化函数
+            formatDateTime: function(inputTime){
+              var date = new Date(inputTime);
+      				var y = date.getFullYear();
+      				var m = date.getMonth() + 1;
+      				m = m < 10 ? ('0' + m) : m;
+      				var d = date.getDate();
+      				d = d < 10 ? ('0' + d) : d;
+      				var h = date.getHours();
+      				h = h < 10 ? ('0' + h) : h;
+      				var minute = date.getMinutes();
+      				var second = date.getSeconds();
+      				minute = minute < 10 ? ('0' + minute) : minute;
+      				second = second < 10 ? ('0' + second) : second;
+      				return h + ':' + minute + ':' + second;
+            },
+          },
+          mounted: function(){
+            this.request();
+          }
+        });
+        setInterval(vue.request(), 10000);
+        // 监听自己挂卖成功  发起请求 获取总挂卖信息
+        api.addEventListener({
+          name: 'guamai_success'
+        }, function(ret, err) {
+          vue.request();
+        });
+        api.addEventListener({
+          name: 'userinfo'
+        }, function(ret, err) {
+          vue.request();
+        });
+      };
+  </script>
+  </html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>title</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+          body,html{
+            height: 100%;
+            /*opacity: 0.1;*/
+            background: transparent;
+          }
+          #app{
+            height: 100%;
+            position: relative;
+            background:rgba(0,0,0,0.1);
+          }
+          #app>div{
+            width: 80%;
+            height: 18rem;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            /*border-radius: 0.3rem;*/
+          }
+          .title{
+            width: 80%;
+            height: 2rem;
+            line-height: 2rem;
+            margin: 0.5rem auto 0;
+            text-align: center;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+          .content{
+            width: 90%;
+            height: 3rem;
+            margin: 0 auto;
+            overflow: scroll;
+            font-size: 0.7rem;
+          }
+          button{
+            width: 90%;
+            height: 2rem;
+            line-height: 2rem;
+            color: white;
+            font-size: 0.8rem;
+            display: block;
+            border-radius: 0.3rem;
+            background-color: rgba(212,157,59,0.8);
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0.5rem;
+          }
+          #app>div>img{
+            width: 90%;
+            height: 40%;
+            margin: 0.5rem auto 0;
+          }
+          #app>img{
+            width: 1.5rem;
+            height: 1.5rem;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 13%;
+          }
+      </style>
+  </head>
+  <body>
+    <div id="app">
+      <div>
+        <h2 class="title" v-text="list.title"></h2>
+        <div class="content" v-html="list.content"></div>
+        <img :src="'http://puti.maiyatang.info' + list.image">
+        <button @click="goto_details()">点击查看</button>
+      </div>
+      <img src="../image/close.png" onclick="api.closeFrame();">
+    </div>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        let vue = new Vue({
+          el:"#app",
+          data:{
+            list: {}
+          },
+          mounted:function(){
+            //获取活动
+            get('about/hd_lists').then(res=>{
+              vue.list = res.data[0];
+            });
+          },
+          methods:{
+            goto_details: function(){
+              openWin('activity_details', true, {data: vue.list});
+              api.closeFrame();
+            }
+          }
+        });
+      };
+  </script>
+  </html>

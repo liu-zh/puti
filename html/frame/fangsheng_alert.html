@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>title</title>
+      <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+      <style>
+          body,html{
+            height: 100%;
+            background: transparent;
+          }
+          #app{
+            height: 100%;
+            position: relative;
+            background:rgba(0,0,0,0.1);
+          }
+          #app>div{
+            width: 80%;
+            height: 12rem;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 0.2rem;
+            background-image: url(../../image/fangsheng/alert_bg.png);
+            background-size: 100% 100%;
+          }
+          .title{
+            width: 80%;
+            line-height: 2.5rem;
+            margin: 1.5rem auto 0;
+            text-align: center;
+            font-weight:blod;
+          }
+          p{
+            text-align: center;
+            line-height: 1.5rem;
+            color:black;
+          }
+          .button{
+            width: 100%;
+            height: 2.3rem;
+            position: absolute;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+          }
+          .button>div{
+            width: 50%;
+            height: 100%;
+            line-height: 2.3rem;
+            text-align: center;
+          }
+          .button>div:nth-child(1){
+            border-top: 1px #9B9B9A solid;
+            border-right: 1px #9B9B9A solid;
+          }
+      </style>
+  </head>
+  <body>
+    <div id="app">
+      <div>
+        <h2 class="title">恭喜您</h2>
+        <p style="color:black; font-size: 0.8rem; font-weight:blod;">您已连续放生{{content.days}}天</p>
+        <p style="font-size: 0.7rem;">奖励您{{content.jiangli}}个菩提粒</p>
+        <div class="button">
+          <div style="color:gray;" onclick="api.closeFrame({name: 'fangsheng_alert'});">取消</div>
+          <div style="color:white; background-color:#FFB900;" onclick="api.closeFrame({name: 'fangsheng_alert'});">确定</div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript" src="../../script/vue.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        let vue = new Vue({
+          el:"#app",
+          data:{
+            content:api.pageParam.res
+          }
+        });
+      };
+      //关闭
+  </script>
+  </html>

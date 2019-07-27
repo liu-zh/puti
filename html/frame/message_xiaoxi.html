@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>消息-frame-消息</title>
+      <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+      <style>
+        body{
+          background-color: #fff;
+        }
+        .aui-badge{
+          left: 13% !important;
+        }
+        .touxiang{
+          width: 2rem;
+          height: 2rem;
+          border-radius: 0.2rem;
+        }
+        .alert{
+          font-size: 0.55rem;
+          text-align: center;
+          height: 5rem;
+          line-height: 5rem;
+        }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <div class="aui-card-list">
+        <div class="aui-card-list-header aui-card-list-user aui-border-b" v-for="it in list" v-if="it.targetId != my_id" @click="openWin('chat_box', true, {id: it.userinfo})">
+          <div class="aui-card-list-user-avatar">
+              <img :src="it.userinfo.avatar" class="touxiang" />
+              <div class="aui-badge" v-if="it.unreadMessageCount != 0" v-text="it.unreadMessageCount"></div>
+          </div>
+          <div class="aui-card-list-user-name">
+              <div v-text="it.userinfo.mobile.substr(0,3)+ '****' + it.userinfo.mobile.substr(7)"></div>
+              <small v-text="formatDateTime(it.receivedTime)"></small>
+          </div>
+          <div class="aui-card-list-user-info" v-text="it.latestMessage.text"></div>
+        </div>
+        <div class="alert" v-if="list.length == 0">暂时没有会话</div>
+      </div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript" src="../../script/vue.js"></script>
+  <script type="text/javascript" src="../../script/common.js"></script>
+  <script type="text/javascript" src="../../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        rongyun();
+        var rong = api.require('rongCloud2');
+        let vue = new Vue({
+          el:"#app",
+          data:{
+            list: [],//聊天列表
+            my_id: $api.getStorage('userid'),//我的id
+            msg: null,// 个人信息
+            token: $api.getStorage('token')
+          },
+          methods:{
+            // 时间转换
+            formatDateTime: function(inputTime){
+              var date = new Date(inputTime);
+              var date1 = new Date();
+      				var y = date.getFullYear();
+      				var m = date.getMonth() + 1;
+      				m = m < 10 ? ('0' + m) : m;
+      				var d = date.getDate();
+              var d1 = date1.getDate();
+      				d = d < 10 ? ('0' + d) : d;
+              d1 = d1 < 10 ? ('0' + d1) : d1;
+      				var h = date.getHours();
+      				h = h < 10 ? ('0' + h) : h;
+      				var minute = date.getMinutes();
+      				var second = date.getSeconds();
+      				minute = minute < 10 ? ('0' + minute) : minute;
+      				second = second < 10 ? ('0' + second) : second;
+              if (d1 == d) {
+                return h + ':' + minute;
+              } else if (d1 - d == 1) {
+                return '昨天'
+              }else{
+                return y + '/' + m + '/' + d;
+              }
+
+            },
+            // 获取个人信息
+            user: function(){
+              rongyun();
+              get('index/u_lists').then(res=>{
+                vue.msg = res.data;// 用户的id列表
+                rong.getConversationList(function(ret, err) {
+                  // console.log(JSON.stringify(ret))
+                  if (ret.status == 'success' && vue.token) {
+                    vue.list = ret.result;// 最近聊天的列表信息
+                    for (let i = 0; i < vue.list.length; i++) {
+                      for (let j = 0; j < vue.msg.length; j++) {
+                        if (vue.msg[j].user_id == vue.list[i].targetId) {
+                          vue.list[i].userinfo = vue.msg[j];
+                        }
+                      }
+                    }
+                  } else {
+                    vue.list = [];
+                  }
+                })
+              })
+            }
+          },
+          mounted:function(){
+            this.user();
+          }
+        });
+        // 监听发送消息
+        api.addEventListener({
+            name: 'sendMsg'
+        }, function(ret, err) {
+          vue.user();
+        });
+        // 监听接收消息
+        api.addEventListener({
+            name: 'receiveMsg'
+        }, function(ret, err) {
+          vue.user();
+        });
+        // 监听是否登录
+        api.addEventListener({
+          name: 'login'
+        }, function(ret, err) {
+          vue.user();
+          rongyun();
+          vue.token = $api.getStorage('token');
+        });
+        // 监听是否退出登录
+        api.addEventListener({
+          name: 'logout'
+        }, function(ret, err) {
+          vue.user();
+          vue.token = $api.getStorage('token');
+        });
+        // 监听清除未读消息成功
+        api.addEventListener({
+          name: 'clear'
+        }, function(ret, err) {
+          vue.user();
+        });
+      };
+  </script>
+  </html>

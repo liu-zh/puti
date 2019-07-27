@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="format-detection" content="telephone=no" />
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>我的</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+        body{
+          background-color: #fff;
+        }
+        header {
+          width: 100%;
+          height: 6rem;
+          background: url(../image/my/bg.png);
+          background-size: 100% 100%;
+          background-repeat: no-repeat;
+        }
+        .login {
+          width: 92%;
+          height: 80%;
+          margin: 0 auto;
+          color: #060505;
+          /*display: flex;
+          align-items: center;*/
+        }
+        .login img {
+          width: 4rem;
+          height: 4rem;
+          margin: 0 auto;
+          border-radius: 50%;
+        }
+        .login-right {
+          text-align: center;
+          font-weight:500;
+          color:rgba(14,13,13,1);
+          font-size: 0.85rem;
+        }
+        .my-order {
+          width: 96%;
+          margin: 0.5rem auto 1rem;
+          height: 5.5rem;
+          border-radius: 5px;
+          box-shadow:0px 0px 2px 0px rgba(212,157,59,0.64);
+          background-color: #fff;
+        }
+        .my-order-top {
+          width: 94%;
+          height: 2rem;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .my-order-top div {
+          font-size: 15px;
+          font-weight: 500;
+          color:rgba(10,10,10,1);
+        }
+        .aui-icon-right {
+          color:rgba(199,199,204,1);
+          font-weight: bold;
+          font-size: 15px;
+        }
+        .my-order-bottom {
+          width: 80%;
+          margin: 0.3rem auto 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .my-order-bottom>div>img {
+          width: 28px;
+          height: 28px;
+          margin: 0 auto 0.3rem;
+        }
+        .my-order-bottom>div {
+          text-align: center;
+        }
+        .my-order-bottom>div>p{
+          color:rgba(102,102,102,1);
+          font-size: 12px;
+        }
+        .aui-list .aui-list-item {
+          min-height: 2.5rem;
+          font-size: 0.7rem;
+          color:rgba(102,102,102,1);
+        }
+        .aui-list-item-arrow:before{
+          width: 0.5rem;
+          height: 0.5rem;
+        }
+        .button{
+          width: 80%;
+          margin: 0.5rem auto;
+        }
+        .button button{
+          width:100%;
+          height:2rem;
+          background-color: rgba(252,184,0,1);
+          border-radius:0.35rem;
+          font-size: 0.9rem;
+          color:white;
+        }
+        .tab{
+          width: 96%;
+          display: flex;
+          align-items: center;
+          height:3.5rem;
+          box-shadow:0px 0px 2px 0px rgba(212,157,59,0.64);
+          margin: 1rem auto;
+          border-radius: 5px;
+        }
+        .tab-left{
+          width: 50%;
+          text-align: center;
+        }
+        .tab-left > img{
+          width: 1.2rem;
+          height: 1.5rem;
+          margin: 0.3rem auto 0;
+        }
+        .tab-left p{
+          color:rgba(102,102,102,1);
+          font-size: 0.6rem;
+          height: 1.2rem;
+          line-height: 1.2rem;
+        }
+        .tab-middle{
+          width: 1px;
+          height: 100%;
+          background-color: #F8E0BF;
+        }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <header id="header">
+        <div class="login">
+          <div class="login-left"><img :src="userMsg.avatar || '../image/my/morentouxiang.png'" onclick="openWin('person_msg', true)" tapmode></div>
+          <div class="login-right">
+            <div v-text="userMsg.mobile || '登录/注册'" @click="logon()"></div>
+            <div v-if="token">
+              <span v-text="'普通会员'" v-if="userMsg.level == 1"></span>
+              <span v-text="'省级代理'" v-if="userMsg.level == 2"></span>
+              <span v-text="'创始人'" v-if="userMsg.level == 3"></span>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div class="tab">
+        <div class="tab-left" onclick="openWin('my_results', true)" tapmode>
+          <img src="../image/my/jiangjin.png">
+          <p>我的业绩</p>
+        </div>
+        <div class="tab-middle"></div>
+        <div class="tab-left" onclick="openWin('putili', true)" tapmode>
+          <img src="../image/my/caiwuguanli.png">
+          <p>菩提粒明细</p>
+        </div>
+      </div>
+      <div class="my-order">
+        <div class="my-order-top" onclick="openWin('myorder', true, {count: 0})" tapmode>
+          <div>我的订单</div>
+          <span class="aui-iconfont aui-icon-right"></span>
+        </div>
+        <div class="my-order-bottom">
+          <div onclick="openWin('myorder', true, {count: 1})" tapmode>
+            <img src="../image/my/pay.png">
+            <p>待付款</p>
+          </div>
+          <div onclick="openWin('myorder', true, {count: 2})" tapmode>
+            <img src="../image/my/fahuo.png" style="width: 1.5rem; height: 1.35rem;">
+            <p>待发货</p>
+          </div>
+          <div onclick="openWin('myorder', true, {count: 3})" tapmode>
+            <img src="../image/my/shouhuo.png">
+            <p>待收货</p>
+          </div>
+          <div onclick="openWin('myorder', true, {count: 4})" tapmode>
+            <img src="../image/my/pinglun.png">
+            <p>待评价</p>
+          </div>
+        </div>
+      </div>
+      <div class="aui-content">
+        <ul class="aui-list aui-list-in">
+          <li class="aui-list-item aui-list-item-middle" @click="shengji()" tapmode>
+              <div class="aui-list-item-media"><img src="../image/my/shengji.png" style="width:1.1rem; height:24px; position: absolute;"></div>
+              <div class="aui-list-item-inner aui-list-item-arrow" style="margin-left: -3rem;">我要升级</div>
+          </li>
+          <li class="aui-list-item aui-list-item-middle" onclick="openWin('invite_friends', true)" tapmode>
+              <div class="aui-list-item-media"><img src="../image/my/invite.png" style="width:17px; height:1rem;position: absolute;"></div>
+              <div class="aui-list-item-inner aui-list-item-arrow" style="margin-left: -3rem;">邀请好友</div>
+          </li>
+          <li class="aui-list-item aui-list-item-middle" onclick="openWin('help_center', true)" tapmode>
+              <div class="aui-list-item-media"><img src="../image/my/help.png" style="width:19px; height:0.9rem;position: absolute;"></div>
+              <div class="aui-list-item-inner aui-list-item-arrow" style="margin-left: -3rem;">帮助中心</div>
+          </li>
+          <li class="aui-list-item aui-list-item-middle" onclick="openWin('account_safe', true)" tapmode>
+              <div class="aui-list-item-media"><img src="../image/my/zhanghuanquan.png" style="width:1rem; height:1.01rem;position: absolute;"></div>
+              <div class="aui-list-item-inner aui-list-item-arrow" style="margin-left: -3rem;">账户安全</div>
+          </li>
+          <li class="aui-list-item aui-list-item-middle" onclick="openWin('my_team', true)" tapmode>
+              <div class="aui-list-item-media"><img src="../image/my/my_team.png" style="width:1rem; height:1rem;position: absolute;"></div>
+              <div class="aui-list-item-inner aui-list-item-arrow" style="margin-left: -3rem;">我的团队</div>
+          </li>
+          <li class="aui-list-item aui-list-item-middle" @click="tuichu()" tapmode>
+              <div class="aui-list-item-media"><img src="../image/my/tuichu.png" style="width:1.2rem; height:1.2rem;position: absolute;"></div>
+              <div class="aui-list-item-inner aui-list-item-arrow" style="margin-left: -3rem;">退出登录</div>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript">
+
+      apiready = function(){
+        // $api.fixStatusBar($api.byId("header"));
+        console.log($api.getStorage('token'))
+        let vue = new Vue({
+          el: "#app",
+          data: {
+            token: $api.getStorage('token'),
+            userMsg: {},
+          },
+          methods: {
+            // 获取个人信息
+            userinfo: function(){
+              userinfo().then( res =>{
+                vue.userMsg = res;
+              });
+            },
+            // 退出登录
+            tuichu: function(){
+              if (vue.token) {
+                api.confirm({
+                    title: '退出登录',
+                    msg: '确认退出登录?',
+                    buttons: ['确定', '取消']
+                }, function(ret, err){
+                    if( ret.buttonIndex == 1 ){
+                      post('user/logout').then( res => {
+                        api.toast({
+                            msg: res.msg,
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        $api.rmStorage('token');
+                        $api.rmStorage('rong_token');
+                        //logout();// 断开融云的链接
+                        vue.userMsg = {};
+                        api.sendEvent({
+                          name: 'logout',
+                        });
+                      });
+                    }
+                });
+              } else {
+                api.toast({msg: '请登录后再试'})
+              }
+            },
+            // 点击用户信息
+            logon: function(){
+              if (vue.token) {
+                openWin('person_msg', true)
+              } else {
+                openWin('login', true)
+              }
+            },
+            // 点击我要升级
+            shengji: function(){
+              if (vue.token) {
+                api.actionSheet({
+                    title: '选择会员等级',
+                    cancelTitle: '取消',
+                    buttons: ['升级为创始人','升级为省级代理']
+                }, function(ret, err){
+                    if( ret ){
+                      if (vue.userMsg.level == 3) {
+                        api.toast({msg: '您已是创始人, 无需申请'});
+                      }else if(vue.userMsg.level == 2){
+                        api.toast({msg: '您已是省级代理, 无需申请'});
+                      } else {
+                        //创始人
+                        if (ret.buttonIndex == 1) {
+                          post('user/sq', {dengji: 3}).then(res=>{
+                            api.toast({msg: '您的升级申请已受理, 请保持电话通畅'});
+                          })
+                        }
+                        // 省代
+                        if (ret.buttonIndex == 2) {
+                          post('user/sq', {dengji: 2}).then(res=>{
+                            api.toast({msg: '您的升级申请已受理, 请保持电话通畅'});
+                          })
+                        }
+                      }
+                    }
+                });
+              } else {
+                openWin('login')
+              }
+            }
+          },
+          mounted: function(){
+            this.userinfo();
+          }
+        });
+        // 监听是否退出登录
+        api.addEventListener({
+          name: 'logout'
+        }, function(ret, err) {
+          vue.token = $api.getStorage("token");
+          vue.userMsg = {};
+        });
+        // 监听是否登录
+        api.addEventListener({
+          name: 'login'
+        }, function(ret, err) {
+          vue.token = $api.getStorage("token");
+          vue.userinfo();
+        });
+        // 监听用户信息是否被修改
+        api.addEventListener({
+          name: 'userinfo'
+        }, function(ret, err) {
+          vue.userinfo();
+        });
+      };
+  </script>
+  </html>

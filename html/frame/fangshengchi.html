@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>放生池frame</title>
+      <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+      <style>
+          body,html{
+            height: 100%;
+            background: transparent;
+          }
+          #app{
+            height: 100%;
+            background:rgba(0,0,0,0.1);
+          }
+          .content{
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: url(../../image/fangsheng/bg1.png);
+            background-size: cover;
+            animation: bg 1s infinite linear;
+          }
+          @keyframes bg{
+            0%{
+              background-image: url(../../image/fangsheng/bg1.png);
+            }
+            100%{
+              background-image: url(../../image/fangsheng/bg2.png);
+            }
+          }
+          .content .top{
+            width: 90%;
+            height: 2rem;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+          }
+          .content .top img{
+            width: 2rem;
+            height: 100%;
+          }
+          .play{
+            animation:spin 1s infinite linear;
+          }
+          @keyframes spin {
+                from {
+                    transform: rotate(0deg);
+                }
+                25%{
+                  transform: rotate(90deg);
+                }
+                50%{
+                  transform: rotate(180deg);
+                }
+                75%{
+                  transform: rotate(270deg);
+                }
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+          .bottom{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            position: absolute;
+            left: 0;
+            bottom: 0.5rem;
+          }
+          .bottom>div{
+            width: 15%;
+          }
+          .bottom>div>div{
+            width: 2.7rem;
+            height: 2.7rem;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            position: relative;
+            margin: 0 auto;
+          }
+          .bottom>div>div>img{
+            position: absolute;
+            margin: auto;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 80%;
+            height: 80%;
+          }
+          .bottom>div>p{
+            text-align: center;
+            color: white;
+          }
+          .fangsheng_img{
+            width: 100%;
+            height: 2.7rem;
+            position: absolute;
+            left: 0;
+            bottom: 10%;
+            transition: all 3s linear;
+          }
+          .fangsheng_img img{
+            width: 2.7rem;
+            height: 2.7rem;
+            margin: 0 auto;
+          }
+          #myCanvas{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            display: none;
+          }
+      </style>
+  </head>
+  <body>
+    <canvas id="myCanvas"></canvas>
+    <div id="app">
+      <audio src="../../res/putixinyu.mp3" autoplay loop style="display:none;" id="music"></audio>
+      <div class="content">
+        <div class="top"><img src="../../image/music.png" @click="stop()" class="play"></div>
+        <div class="fangsheng_img"></div>
+        <div class="bottom">
+          <div @click="fangsheng(0)">
+            <div><img src="../../image/fangsheng/jinyu.png"></div>
+            <p>金鱼</p>
+          </div>
+          <div @click="fangsheng(1)">
+            <div><img src="../../image/fangsheng/wugui.png"></div>
+            <p>乌龟</p>
+          </div>
+          <div @click="fangsheng(2)">
+            <div><img src="../../image/fangsheng/gezi.png"></div>
+            <p>鸽子</p>
+          </div>
+          <div @click="fangsheng(3)">
+            <div><img src="../../image/fangsheng/niqiu.png"></div>
+            <p>泥鳅</p>
+          </div>
+          <div @click="fangsheng(4)">
+            <div><img src="../../image/fangsheng/jiayu.png"></div>
+            <p>甲鱼</p>
+          </div>
+          <div @click="fangsheng(5)">
+            <div><img src="../../image/fangsheng/jinli.png"></div>
+            <p>锦鲤</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript" src="../../script/common.js"></script>
+  <script type="text/javascript" src="../../script/vue.js"></script>
+  <script type="text/javascript" src="../../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      var timer;
+      var W, H, ctx, angle, len, count;
+      // $api.rmStorage('fangsheng_date');
+      // $api.rmStorage('fangsheng');
+      apiready = function(){
+        var toast = new auiToast();
+        let vue = new Vue({
+          el:"#app",
+          data:{
+            num: 1,//放生数量
+            isPlay: false,//音乐是否播放
+            change_img:0,
+            isSign: 0
+          },
+          methods:{
+            // 右上角音乐的播放
+            stop: function(){
+              if ($api.byId('music').paused) {
+                vue.isPlay = true;
+                $api.addCls($api.dom('.top>img'), 'play');
+                $api.byId('music').play();
+              } else {
+                $api.byId('music').pause();
+                $api.removeCls($api.dom('.top>img'), 'play');
+                $api.dom('.top img').src = "../../image/music.png";
+              }
+            },
+
+            // 点击放生
+            fangsheng: function(i){
+              api.confirm({
+                  title: '温馨提示',
+                  msg: '每次放生将会随机消耗您10~20粒菩提粒',
+                  buttons: ['去放生', '取消']
+              }, function(ret, err){
+                  if( ret.buttonIndex == 1 ){
+                    var putizi_num = Math.floor(Math.random() * 11) + 10;
+                    post('guamai/fangsheng', {num: putizi_num}).then(res=>{
+                      console.log(JSON.stringify(res))
+                      rains();//下雨动画
+                      api.toast({msg:res.data.msg, duration: 3000});
+                      var n = 1;
+                      $api.append($api.dom('.fangsheng_img'), '<img/>');
+                      $api.dom('.fangsheng_img').style.bottom = '45%';
+                      $api.dom('.fangsheng_img').style.opacity = 0;
+                      api.sendEvent({
+                          name: 'userinfo'
+                      });
+                      switch (i) {
+                        case 0:
+                        $api.dom('.fangsheng_img img').src = '../../image/fangsheng/jinyu/' + n + '.png';
+                        setInterval(function(){
+                          $api.dom('.fangsheng_img img').src = '../../image/fangsheng/jinyu/' + n + '.png';
+                          n++;
+                          if (n > 3) {
+                            n = 1;
+                          }
+                        },200);
+                        break;
+                        case 1:
+                        $api.dom('.fangsheng_img img').src = '../../image/fangsheng/wugui/' + n + '.png';
+                        setInterval(function(){
+                          $api.dom('.fangsheng_img img').src = '../../image/fangsheng/wugui/' + n + '.png';
+                          n++;
+                          if (n > 2) {
+                            n = 1;
+                          }
+                        },300);
+                        break;
+                        case 2:
+                        $api.dom('.fangsheng_img img').src = '../../image/fangsheng/gezi/' + n + '.png';
+                        setInterval(function(){
+                          $api.dom('.fangsheng_img img').src = '../../image/fangsheng/gezi/' + n + '.png';
+                          n++;
+                          if (n > 6) {
+                            n = 1;
+                          }
+                        },100);
+                        break;
+                        case 3:
+                        $api.dom('.fangsheng_img img').src = '../../image/fangsheng/niiqu/1.png';
+                        setInterval(function(){
+                          $api.dom('.fangsheng_img img').src = '../../image/fangsheng/niiqu/' + n + '.png';
+                          n++;
+                          if (n > 2) {
+                            n = 1;
+                          }
+                        },200);
+                        break;
+                        case 4:
+                        $api.dom('.fangsheng_img img').src = '../../image/fangsheng/jiayu/' + n + '.png';
+                        setInterval(function(){
+                          $api.dom('.fangsheng_img img').src = '../../image/fangsheng/jiayu/' + n + '.png';
+                          n++;
+                          if (n > 2) {
+                            n = 1;
+                          }
+                        },300);
+                        break;
+                        case 5:
+                        $api.dom('.fangsheng_img img').src = '../../image/fangsheng/jinli/' + n + '.png';
+                        setInterval(function(){
+                          $api.dom('.fangsheng_img img').src = '../../image/fangsheng/jinli/' + n + '.png';
+                          n++;
+                          if (n > 2) {
+                            n = 1;
+                          }
+                        },200);
+                        break;
+                      }
+                      if(res.data.jiangli){
+                        alert_jiangli(res.data);
+                      }
+                      setTimeout(function(){
+                        $api.byId('myCanvas').style.display = "none";
+                      },3000)
+                    });
+                  }
+              });
+            }
+          },
+
+        });
+      };
+      // 下雨动画
+      function rains(){
+        W = api.winWidth, H = api.winHeight, angle = 0, len = 1, count = 700;
+  			var canvas = document.getElementById("myCanvas");
+        canvas.style.display = "block";
+  			if (canvas.getContext) {
+  				ctx = canvas.getContext('2d');
+  				ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  				ctx.lineCap = 'round';
+  				var run = setInterval(function(){
+            //清除上一帧
+    				ctx.clearRect(0, 0, W, H);
+    				//重新绘制
+    				xiayus();
+          }, 100);
+  			}
+      }
+      function xiayu(x, y) {
+				ctx.beginPath();
+				ctx.moveTo(x, y);
+				ctx.lineTo(x + angle, y + len);
+				ctx.lineWidth = 2;
+				ctx.stroke();
+			}
+
+			function xiayus() {
+				for (var i = 1; i <= count; i++) {
+					xiayu(Math.random() * W, Math.random() * H);
+				}
+			}
+      //弹出奖励
+      function alert_jiangli(r){
+        api.openFrame({
+          name: 'fangsheng_alert',
+          url: 'widget://html/frame/fangsheng_alert.html',
+          rect: {x: 0, y: 0, w: api.winWidth, h: api.winHeight},
+          pageParam:{res: r},
+          bounces: false,
+           bgColor: 'rgba(0,0,0,0.6)'
+        });
+
+      }
+  </script>
+  </html>

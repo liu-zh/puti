@@ -1,0 +1,362 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>底部导航</title>
+    <link rel="stylesheet" type="text/css" href="./css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="./css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="./css/style.css"/>
+    <style>
+        /*header{height: 44px;}*/
+        #footer{  background-color: white; height: 55px;}
+        #footer ul {
+          height: 55px;padding-bottom: 2px;
+        }
+        #footer ul li{  padding-top: 30px; padding-bottom: 4px; background: url() no-repeat center 5px; background-size: auto 25px; text-align: center; }
+        #footer ul li.active{ color: #D9A852; }
+        #footer ul li:nth-child(1){ background-image: url(./image/footerbar/home.png); }
+        #footer ul li:nth-child(2){ background-image: url(./image/footerbar/shopstore.png); }
+        #footer ul li:nth-child(3){ background-image: url(./image/footerbar/message.png); }
+        #footer ul li:nth-child(4){ background-image: url(./image/footerbar/my.png); }
+        #footer ul li:nth-child(1).active{ background-image: url(./image/footerbar/home1.png); }
+        #footer ul li:nth-child(2).active{ background-image: url(./image/footerbar/shopstore1.png); }
+        #footer ul li:nth-child(3).active{ background-image: url(./image/footerbar/message1.png); }
+        #footer ul li:nth-child(4).active{ background-image: url(./image/footerbar/my1.png); }
+        .flex-con{
+          overflow: auto
+        }
+        .home-header {
+          width: 100%;
+          height: 44px;
+          background-color: rgb(212,157,59);
+        }
+        .home-header .head {
+          width: 92%;
+          height: 100%;
+          display: flex;
+          justify-content: space-between;
+          margin: 0 auto;
+          align-items: center;
+
+        }
+        .home-header .head .xiaoxi {
+          width: 1.3rem;
+          height: 1.3rem;
+        }
+      .home-header .head .erji {
+          width: 1.3rem;
+          height: 1.3rem;
+        }
+        .home-header .input {
+          width: 80%;
+          height: 67%;
+          background:rgba(255,255,255,1);
+          border-radius: 15px;
+          background-color: white;
+          color:rgba(69,64,64,1);
+          display: flex;
+          align-items: center;
+          font-size: 13px;
+        }
+        .home-header .input span:nth-child(1) {
+          display: inline-block;
+          margin: 0 10px;
+          font-size: 14px;
+        }
+        .home-header .input span:nth-child(1) {
+          font-size: 14px;
+          color:rgba(69,64,64,1);
+        }
+        .store-header{
+          width: 100%;
+          height: 44px;
+          background:rgba(212,157,59,0.8);
+        }
+        .store-header>p{
+          height: 100%;
+          padding-left: 1rem;
+          line-height: 2.2rem;
+          color: white;
+          font-weight:bold;
+          color:rgba(251,249,249,1);
+          font-size: 18px;
+        }
+        .message-header{
+          width: 100%;
+          height: 44px;
+          background-color: #fff;
+        }
+        .message-header>p{
+          width: 100%;
+          height: 100%;
+          line-height: 2.2rem;
+          font-weight:500;
+          color:rgba(2,2,2,1);
+          font-size: 18px;
+          margin-left: 1rem;
+        }
+        .my-header{
+          width: 100%;
+          height: 44px;
+          background-color: #fff;
+        }
+        .my-header>div{
+          width: 92%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin: 0 auto;
+          font-size: 18px;
+          color:rgba(14,13,13,1);
+        }
+    </style>
+</head>
+<body>
+<div id="wrap" class="flex-wrap flex-vertical">
+    <header>
+      <!-- 首页 -->
+      <div class="home-header active">
+        <div class="head">
+          <img src="./image/home/xiaoxi.png" class="xiaoxi" tapmode onclick="goto_message()">
+          <div class="input" onclick="openWin('search', false)">
+            <span class="aui-iconfont aui-icon-search"></span>
+            <span>搜索宝贝</span>
+          </div>
+          <img src="./image/home/erji.png" class="erji" onclick="openWin('null', false, {title: '客服中心'})">
+        </div>
+      </div>
+      <!-- 商城 -->
+      <div class="store-header">
+        <p>商城</p>
+      </div>
+      <!-- 消息 -->
+      <div class="message-header">
+        <p>消息</p>
+      </div>
+      <!-- 我的 -->
+      <div class="my-header">
+        <div>
+          <span>我的</span>
+          <span onclick="openWin('set', false)" tapmode>设置</span>
+        </div>
+      </div>
+    </header>
+    <div id="main" class="flex-con"></div>
+    <div id="footer" class="border-t">
+        <ul class="flex-wrap" >
+            <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con active" >首页</li>
+            <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con" >商城</li>
+            <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con" >消息</li>
+            <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con" >我的</li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="script/api.js"></script>
+<script type="text/javascript" src="script/common.js"></script>
+<script type="text/javascript" src="script/jiguang.js"></script>
+<script type="text/javascript" src="script/aui-toast.js"></script>
+<script type="text/javascript">
+    var person_msg;
+    apiready = function () {
+      $api.fixStatusBar( $api.dom('header') );
+      $api.setStorage('foot_height', $api.dom('#footer').offsetHeight);
+      $api.setStorage('header_height', $api.dom('header').offsetHeight);
+      rongyun();
+        api.setStatusBarStyle({
+            style: 'dark',
+            color: '#fff'
+        });
+        var token = $api.getStorage('token');
+        funIniGroup();
+        exitApp();
+        // 极光推送
+        noticePush();
+        if (!token) {
+          api.confirm({
+              title: '请登录',
+              msg: '您是游客状态, 是否登录?',
+              buttons: ['登录', '取消']
+          }, function(ret, err){
+              if (ret.buttonIndex == 1) {
+                openWin('login');
+              }
+          });
+        }
+        get('about/hd_lists').then(res=>{
+          if (res.data[0]) {
+            api.openFrame({
+              name: 'alert',
+              url: 'widget://html/alert.html',
+              rect: {x: 0, y: 0, w: api.winWidth, h: api.winHeight},
+              bounces: false,
+               bgColor: 'rgba(0,0,0,0.6)'
+            });
+          }
+        });
+        get('index/u_lists').then(res=>{
+          person_msg = res.data;
+        });
+        // 监听接收消息
+        api.addEventListener({
+            name: 'receiveMsg'
+        }, function(ret, err) {
+            var msg;
+            person_msg.map(r=>{
+              if (r.user_id == ret.value.id) {
+                msg = r;
+              }
+            })
+            // 调动通知栏
+            api.notification({
+              notify: {title: '菩提心语',  content: '您收到一条新的消息', extra:msg},
+              sound: 'widget://res/7815.wav'
+            });
+        });
+        // 监听点击通知栏
+        api.addEventListener({
+          name:'noticeclicked'
+        },function(ret,err){
+          if (ret.value) {
+            //ret.value  字符串
+            openWin('chat_box', true, {id: JSON.parse(ret.value)});
+          }
+        });
+
+        // 链接百度地图 获取用户位置
+       //var bMap = api.require('bMap');
+        // if(systemType == "ios"){
+        //   bMap.initMapSDK(function(ret) {});
+        // }
+        //获取经纬度
+        // bMap.getLocation({
+        //   accuracy: '100m',
+        //   autoStop: true,
+        //   filter: 1
+        // }, function(ret, err) {
+        //   if (ret.status) {
+        //     console.log(JSON.stringify(ret));
+        //     bMap.getNameFromCoords({
+        //       lon: ret.lon,
+        //       lat: ret.lat
+        //     }, function(ret1, err1) {
+        //       console.log(JSON.stringify(ret1));
+        //     });
+        //   }
+        // });
+    }
+
+    function funIniGroup(){
+        var eHeaderLis = $api.domAll('header li'),
+            frames = [
+              {name: 'home', url: './html/frame/home.html', bounces: true},
+              {name: 'store', url: './html/store.html', bounces: false},
+              {name: 'message', url: './html/message.html', bounces: false},
+              {name: 'my', url: './html/my.html', bounces: false}
+            ];
+        api.openFrameGroup({
+            name: 'group',
+            scrollEnabled: false,
+            rect: {
+                x: 0,
+                w: api.winWidth,
+                marginBottom:$api.dom('#footer').offsetHeight,
+                marginTop: $api.dom('header').offsetHeight
+            },
+            index: 0,
+            preload:0,
+            frames: frames
+        }, function (ret, err) {
+
+        });
+    }
+
+    // 随意切换按钮
+    function randomSwitchBtn( tag ) {
+        if( tag == $api.dom('#footer li.active') )return;
+        var eFootLis = $api.domAll('#footer li'),
+            eHeaderLis = $api.domAll('header>div'),
+            index = 0;
+        for (var i = 0,len = eFootLis.length; i < len; i++) {
+            if( tag == eFootLis[i] ){
+                index = i;
+            }else{
+                $api.removeCls(eFootLis[i], 'active');
+                $api.removeCls(eHeaderLis[i], 'active');
+            }
+        }
+        $api.addCls( eFootLis[index], 'active');
+        $api.addCls( eHeaderLis[index], 'active');
+        if (index == 0) {
+          api.closeFrame({name: 'store_frame'});
+          api.setFrameGroupAttr({name: 'message_frame', hidden: true});
+        }
+        if (index == 1) {
+          api.setFrameGroupAttr({name: 'message_frame', hidden: true});
+          api.openFrame({
+            name: 'store_frame',
+            url: 'widget://html/frame/store.html',
+            rect: {x: 0, marginTop: 258, w: 'auto', marginBottom:$api.getStorage('foot_height')},
+            bounces: false,
+          });
+        }
+        if (index == 2) {
+          api.setFrameGroupAttr({name: 'message_frame', hidden: false});
+          api.closeFrame({name: 'store_frame'});
+        }
+        if (index == 3) {
+          api.closeFrame({name: 'store_frame'});
+          api.setFrameGroupAttr({name: 'message_frame', hidden: true});
+        }
+        api.setFrameGroupIndex({
+            name: 'group',
+            index: index
+        });
+
+    }
+
+    // 返回按钮关闭程序
+    function exitApp(){
+      api.addEventListener({
+    		name: 'keyback'
+    	}, function(ret, err){
+    		api.toast({
+    			msg: '在次点击返回键退出APP',
+    			duration:2000,
+    			location: 'bottom'
+    		});
+
+    		api.addEventListener({
+    			name: 'keyback'
+    		}, function(ret, err){
+    			$api.setStorage("gesture",false);
+    			api.closeWidget({
+    			id: 'A6003463164800', //这里需要修改为自己的应用ID
+    			retData: {name:'closeWidget'},
+    			silent:true
+    			});
+    		});
+    		setTimeout(function(){
+    			exitApp();
+    		},3000)
+    	});
+    }
+    //去往消息页面
+    function goto_message(){
+      var eFootLis = $api.domAll('#footer li');
+      var eHeaderLis = $api.domAll('header>div');
+      api.setFrameGroupIndex({
+          name: 'group',
+          index: 2
+      });
+      api.setFrameGroupAttr({name: 'message_frame', hidden: false});
+      $api.removeCls(eHeaderLis[0], 'active');
+      $api.removeCls(eFootLis[0], 'active');
+      $api.addCls( eFootLis[2], 'active');
+      $api.addCls( eHeaderLis[2], 'active');
+    }
+</script>

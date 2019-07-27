@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>title</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+          body{
+            background-color: #fff;
+          }
+          #header{
+            width: 100%;
+            height: 44px;
+            background-color: #E1BA75;
+            position: fixed;
+            left: 0;
+            top: 0;
+          }
+          .title{
+            width: 90%;
+            margin: 4rem auto 0;
+            font-weight: bold;
+            font-size: 18px;
+            line-height: 1.5rem;
+          }
+          .time {
+            width: 90%;
+            margin: 0 auto;
+            height: 2rem;
+            line-height: 2rem;
+            color: #888888;
+          }
+          .content{
+            width: 90%;
+            margin: 0 auto;
+            line-height: 1.5rem;
+            color: #888888;
+          }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-pull-left aui-btn" onclick="api.closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title" v-if="msg.category_id == 12">{{name}}</div>
+        <div class="aui-title" v-if="msg.category_id == 13">{{name}}</div>
+        <div class="aui-title" v-if="msg.category_id == 14">{{name}}</div>
+        <div class="aui-title" v-if="msg.category_id == 15">{{name}}</div>
+      </header>
+      <div class="title">【{{name}}】{{msg.c_title}}</div>
+      <div class="time">{{formatDateTime(msg.createtime * 1000)}}</div>
+      <div class="content" v-html="msg.c_content"></div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        $api.fixStatusBar($api.byId('header'));
+        let vue = new Vue({
+          el: '#app',
+          data:{msg: api.pageParam.data, name: api.pageParam.content},
+          methods: {
+            // 时间戳转化函数
+            formatDateTime: function(inputTime){
+              var date = new Date(inputTime);
+      				var y = date.getFullYear();
+      				var m = date.getMonth() + 1;
+      				m = m < 10 ? ('0' + m) : m;
+      				var d = date.getDate();
+      				d = d < 10 ? ('0' + d) : d;
+      				var h = date.getHours();
+      				h = h < 10 ? ('0' + h) : h;
+      				var minute = date.getMinutes();
+      				var second = date.getSeconds();
+      				minute = minute < 10 ? ('0' + minute) : minute;
+      				second = second < 10 ? ('0' + second) : second;
+      				return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second;
+            },
+          }
+        });
+      };
+  </script>
+  </html>

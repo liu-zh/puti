@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>待发货</title>
+      <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../../css/order.css"/>
+      <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+      <style></style>
+  </head>
+  <body>
+    <section id="app">
+      <div class="wrap" v-for="it in list" v-if="isShow">
+        <div class="line"></div>
+        <div class="title">
+          <span>菩提心语</span>
+          <span>买家已付款</span>
+        </div>
+        <div class="box" v-for="item in it.orders_detail">
+          <div class="details">
+            <div class="details-left"><img src="../../image/home/goodsimg.png"></div>
+            <div class="details-right">
+              <div class="details-right-top">
+                <div class="text">{{item.goods_name}}</div>
+                <div class="price">
+                  <p>¥ {{item.goods_unit_price}}</p>
+                  <p>x1</p>
+                </div>
+              </div>
+              <div class="details-right-bottom">化妆品净含量: 180ml/每瓶</div>
+            </div>
+          </div>
+          <div class="goods">
+            <span>共{{item.num}}件商品</span>
+            <span>订单金额 ¥{{item.all_money}}</span>
+          </div>
+        </div>
+        <div class="bottom">
+          <div class="pay" onclick="api.toast({msg: '请您线下付款'})">提醒发货</div>
+        </div>
+      </div>
+      <div class="alert" v-if="!isShow">您没有相关的订单</div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript" src="../../script/vue.js"></script>
+  <script type="text/javascript" src="../../script/common.js"></script>
+  <script type="text/javascript" src="../../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        let vue = new Vue({
+          el:"#app",
+          data:{
+            list: [],// 全部订单的数据
+            isShow: null
+          },
+          methods: {
+            // 获取全部订单信息
+            all: function(){
+              post('orders/index').then(res=>{
+                vue.list = res.data;
+                vue.isShow = res.data.some(r=>{
+                  return r.status == 1;
+                })
+              })
+            }
+          },
+          mounted:function(){
+            this.all();
+          }
+        });
+        //监听订单信息
+        api.addEventListener({
+            name: 'order'
+        }, function(ret, err){
+            vue.all();
+        });
+      };
+  </script>
+  </html>

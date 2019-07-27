@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>消息</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+          header {
+            width: 100%;
+            background-color: #fff;
+          }
+          .aui-tab {
+            display: flex;
+            justify-content: space-around;
+          }
+          .aui-tab-item{
+            width: 3rem;
+            font-size: 16px;
+            font-weight:500;
+            color:rgba(0,0,0,1);
+          }
+          .aui-tab .aui-active {
+            color:rgba(0,0,0,1) !important;
+            border-bottom: 3px solid rgba(243,53,19,1);
+          }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <header id="header">
+        <div class="aui-tab" id="tab">
+          <div class="aui-tab-item aui-active">消息</div>
+          <div class="aui-tab-item">通知<div class="aui-dot" v-if="i"></div></div>
+        </div>
+      </header>
+    </section>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-tab.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        var toast = new auiToast();
+        var rong = api.require('rongCloud2');
+        openFrame();
+        let vue = new Vue({
+          el: "#app",
+          data: {
+            list: [],
+            i: null,
+          },
+          methods: {
+            // 通知信息
+            tongzhi: function(){
+              get('about/inform').then(res=>{
+                res.data.map(r =>{
+                  if (r.readed == 0) {
+                    vue.i = true;
+                  } else {
+                    vue.i = false;
+                  }
+                });
+
+              })
+            }
+          },
+          mounted: function(){
+            this.tongzhi();
+          }
+        });
+
+        // 监听是否查看通知
+        api.addEventListener({
+            name: 'tongzhi'
+        }, function(ret, err){
+            vue.tongzhi();
+        });
+        change_tab(1);// 切换tab
+      };
+      function openFrame(){
+        api.openFrameGroup ({
+            name: 'message_frame',
+            scrollEnabled: true,
+            rect: {x: 0, marginTop: Number($api.getStorage('header_height')) + $api.dom('#app').offsetHeight, w: 'auto', marginBottom: $api.getStorage('foot_height')},
+            index: 0,
+            frames: [
+              {name: 'home', url: 'widget://html/frame/message_xiaoxi.html'},
+              {name: 'home', url: 'widget://html/frame/message_tongzhi.html'},
+            ]
+        }, function(ret, err){
+          change_tab(ret.index + 1);
+          // $api.addCls( $api.domAll('#tab>div')[ret.index], 'aui-active');
+        });
+      }
+      // tab切换工具栏
+      function change_tab(index){
+        var tab = new auiTab({
+          element:document.getElementById("tab"),
+          index:index,
+          repeatClick:false
+        },function(ret){
+          api.setFrameGroupIndex({
+              name: 'message_frame',
+              index: ret.index - 1
+          });
+        });
+      }
+  </script>
+  </html>

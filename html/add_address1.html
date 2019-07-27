@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>title</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+          body{
+
+          }
+          #header{
+            width: 100%;
+            height: 44px;
+            background-color: rgb(212,157,59);
+          }
+          input::-webkit-input-placeholder {
+              font-size: 12px;
+          }
+          .aui-list textarea {
+            height: 2rem;
+          }
+          button{
+            width: 90%;
+            height: 2rem;
+            line-height: 2rem;
+            margin: 1rem auto 0;
+          }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-pull-left aui-btn" onclick="api.closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">{{title}}</div>
+        <div class="aui-pull-right aui-btn" @click="save(api.pageParam.type)" style="font-size: 0.7rem;">保存</div>
+      </header>
+      <div class="aui-content">
+        <ul class="aui-list aui-list-in">
+          <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">收货人:</div>
+                <input type="text" v-model="name" class="aui-list-item-input">
+            </div>
+          </li>
+          <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">手机号:</div>
+                <input type="number" v-model="tel" class="aui-list-item-input">
+            </div>
+          </li>
+          <li class="aui-list-item" @click="choose()">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-label">所在地区:</div>
+                <input type="text" v-model="area" readonly class="aui-list-item-input">
+            </div>
+          </li>
+          <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">详细地址:</div>
+                <textarea v-model="detail" placeholder="如道路、门牌号、小区、楼栋号等" class="aui-list-item-input"></textarea>
+            </div>
+          </li>
+          <li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label">设为默认地址</div>
+                <div class="aui-list-item-input" style="width: 30%;">
+                    <input type="checkbox" class="aui-switch aui-pull-right" v-model="type">
+                </div>
+            </div>
+          </li>
+          <li class="aui-list-item" @click="deleted()" v-if="title == '修改收货地址'">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-label" style="color: #E53B3B;">删除地址</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        $api.fixStatusBar($api.byId('header'));
+        var toast = new auiToast();
+        let vue = new Vue({
+          el: "#app",
+          data:{
+            name:null,// 收货人姓名
+            tel: null, //收货人手机号
+            area: null, // 收货人所在地区
+            detail: null,// 详细地址
+            type: true, //是否为默认地址
+            title: null,// 标题
+            msg: {},// 地址信息
+          },
+          methods:{
+            //选择所在地区
+            choose: function(){
+              var UIActionSelector = api.require('UIActionSelector');
+              UIActionSelector.open({
+                datas: 'widget://res/city.json',
+                layout: {
+                    row: 5,
+                    col: 3,
+                    height: 30,
+                    size: 12,
+                    sizeActive: 14,
+                    rowSpacing: 5,
+                    colSpacing: 10,
+                    maskBg: 'rgba(0,0,0,0.2)',
+                    bg: '#fff',
+                    color: '#888',
+                    colorActive: '#f00',
+                    colorSelected: '#D49D3B'
+                },
+                animation: true,
+                cancel: {
+                    text: '取消',
+                    size: 12,
+                    w: 60,
+                    h: 35,
+                    bg: '#fff',
+                    bgActive: '#ccc',
+                    color: '#888',
+                    colorActive: '#fff'
+                },
+                ok: {
+                    text: '确定',
+                    size: 12,
+                    w: 60,
+                    h: 35,
+                    bg: '#fff',
+                    bgActive: '#ccc',
+                    color: '#888',
+                    colorActive: '#fff'
+                },
+                title: {
+                    text: '请选择地区',
+                    size: 12,
+                    h: 44,
+                    bg: '#eee',
+                    color: '#888'
+                },
+                fixedOn: api.frameName
+                }, function(ret, err) {
+                      if(ret.eventType == 'ok'){
+                        vue.area = ret.level1 + '/' + ret.level2 + '/' + ret.level3;
+                      }
+                });
+            },
+            // 保存地址
+            save: function(t){
+              if (vue.name == null) {
+                api.toast({ msg: '请输入收货人姓名'});
+              } else if(!(/^1(3|4|5|6|7|8|9)\d{9}$/.test(vue.tel))){
+                api.toast({ msg: '请输入正确的手机号'});
+              } else if (vue.area == null) {
+                api.toast({ msg: '请输入收货人地区'});
+              } else if(vue.detail == null){
+                api.toast({ msg: '请输入详细地址'});
+              } else {
+                // 发起网络请求
+                var type;
+                if (vue.type) {
+                  type = '1';
+                } else {
+                  type = '0'
+                }
+                if (t == 0) {
+                  post('user/address', {city: vue.area, area: vue.detail, type: type, person: vue.name, mobile: vue.tel}).then(res=>{
+                    api.sendEvent({
+                        name: 'add_address',
+                    });
+                    api.toast( {msg: res.msg} );
+                    setTimeout(function() {
+                        api.closeWin()
+                    }, 1000);
+                  })
+                }
+                if (t == 1) {
+                  post('user/address_edit', {city: vue.area, area: vue.detail, type: type, person: vue.name, mobile: vue.tel, id: api.pageParam.id.id}).then(res=>{
+                    api.sendEvent({
+                        name: 'add_address',
+                    });
+                    api.toast( {msg: res.msg} );
+                    setTimeout(function() {
+                        api.closeWin()
+                    }, 1000);
+                  })
+                }
+              }
+            },
+            //删除收货地址
+            deleted:function(){
+              api.confirm({
+                  msg: '确定要删除该地址吗?',
+                  buttons: ['删除', '取消']
+              }, function(ret, err){
+                if (ret.buttonIndex == 1) {
+                  //发起请求 删除此地址
+                  get('user/address_del', {id: api.pageParam.id.id}).then(res=>{
+                    api.sendEvent({
+                        name: 'add_address',
+                    });
+                    api.toast( {msg: res.msg} );
+                    setTimeout(function() {
+                        api.closeWin()
+                    }, 1000);
+                  })
+                }
+              });
+            },
+          },
+        });
+        if (api.pageParam.type == 0) {
+          vue.title = '添加收货地址'
+        } else {
+          vue.title = '修改收货地址';
+          vue.msg = api.pageParam.id;
+          vue.name = api.pageParam.id.person;
+          vue.tel = api.pageParam.id.mobile;
+          vue.area = api.pageParam.id.city;
+          vue.detail = api.pageParam.id.area;
+          vue.type = api.pageParam.id.type;
+        }
+      };
+  </script>
+  </html>

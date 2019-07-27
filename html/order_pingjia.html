@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>发布评价</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+          body{
+            background-color: #fff;
+          }
+          #header{
+            width: 100%;
+            height: 44px;
+            background-color: rgb(212,157,59);
+            margin-top: 25px;
+          }
+          .area {
+            width: 94%;
+            margin: 1rem auto 0;
+            height: 5rem;
+          }
+          .area textarea {
+            width: 100%;
+            height: 100%;
+          }
+          .img {
+            width: 4rem;
+            height: 4rem;
+            margin-left: 3%;
+            border: 1px gray dotted;
+            position: relative;
+          }
+          .line{
+            width: 100%;
+            height: 3px;
+            background-color: #F5F5F5;
+            margin: 0.5rem 0;
+          }
+          .img img {
+            width: 65%;
+            height: 50%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+          }
+          p{
+            width: 4rem;
+            text-align: center;
+            margin-left: 3%;
+            font-size: 14px;
+          }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-pull-left aui-btn" onclick="api.closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">发布评价</div>
+        <div class="aui-pull-right aui-btn" @click="save()" style="font-size: 0.7rem;">发布</div>
+      </header>
+      <div class="area">
+        <textarea v-model="content" placeholder="请输入评价详情"></textarea>
+      </div>
+      <div class="line"></div>
+      <div class="img" @click="touxiang()"><img :src="img || '../image/my/camera.png'"></div>
+      <p>添加图片</p>
+    </section>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        var toast = new auiToast();
+        let vue = new Vue({
+          el: "#app",
+          data:{
+            content: null,
+            img: null,
+            id: api.pageParam.id,
+          },
+          methods:{
+            // 发布评价
+            save: function(){
+              post('order/evaluate', {content: vue.content, img: vue.img, id: api.pageParam.id}).then(res=>{
+                api.toast( {msg: res.msg} );
+                setTimeout(function() {
+                    api.closeWin()
+                }, 1000);
+              });
+            },
+            // 选择图片
+            touxiang:function(){
+              api.actionSheet({
+                  title : '上传照片',
+                  cancelTitle : '取消',
+                  buttons : ['拍照', '手机相册']
+              }, function(ret, err) {
+                  if (ret) {
+                      if (ret.buttonIndex == 1) {
+                          api.getPicture({
+                              sourceType : 'camera',
+                              encodingType : 'jpg',
+                              mediaValue : 'pic',
+                              destinationType : 'url',
+                              allowEdit : false,
+                              quality : 100,
+                              saveToPhotoAlbum : false
+                          }, function(ret, err) {
+                              if (ret.data) {
+                                vue.img = ret.data;
+                                vue.saveImg(ret.data, 1);
+                              } else {
+                                  api.toast({
+                                      msg : '图像获取失败',
+                                      duration : 3000,
+                                      location : 'bottom'
+                                  });
+                              }
+                          });
+                      } else if (ret.buttonIndex == 2) {
+                          //手机相册选图片
+                          api.getPicture({
+                              sourceType : 'library',
+                              encodingType : 'png',
+                              mediaValue : 'pic',
+                              destinationType : 'url',
+                              allowEdit : true,
+                              quality : 100,
+                              preview:true,
+                              saveToPhotoAlbum : false
+                          }, function(ret, err) {
+                              if (ret.data) {
+                                vue.img = ret.data;
+                                vue.saveImg(ret.data, 2);
+                              } else {
+                                  api.toast({
+                                      msg : '图像获取失败',
+                                      duration : 3000,
+                                      location : 'bottom'
+                                  });
+                              }
+                          });
+                      }
+                  }
+              });
+            },
+            // 上传头像
+            saveImg: function(path, type){
+              api.ajax({
+                  url : 'http://puti.maiyatang.info/api/common/upload',
+                  method : 'post',
+                  headers:{
+                    'token': $api.getStorage('token')
+                  },
+                  data : {
+                      files : {
+                          file : path
+                      }
+                  }
+              }, function(ret, err) {
+                  api.hideProgress();
+                  if (ret.code == 1) {
+                    vue.img = 'http://puti.maiyatang.info' + ret.data.url;
+                    api.toast({
+                        msg : ret.msg
+                    });
+                  } else {
+                    api.toast({
+                        msg : ret.msg
+                    });
+                  }
+              });
+            },
+          },
+          mounted: function(){}
+        });
+      };
+  </script>
+  </html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>挂卖记录-frame</title>
+      <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+      <style>
+          body,html{
+            height: 100%;
+          }
+          #app{
+            /*background-color: rgba(212,157,59,0.16);*/
+          }
+          .list {
+            width: 95%;
+            margin:0 auto;
+            padding: 0.6rem;
+          }
+          .list-box {
+            width: 100%;
+            height: 5rem;
+            background-color: #fff;
+            border-radius: 10px;
+            margin:0 auto 0.6rem;
+          }
+          .list-box-top {
+            width: 95%;
+            height: 2.5rem;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+          }
+          .list-box-top>div:nth-child(1) {
+            display: flex;
+            align-items: center;
+          }
+          .list-box-top>div:nth-child(1)>img {
+            width: 1.5rem;
+            height: 1.5rem;
+          }
+          .list-box-top>div:nth-child(2){
+            font-weight:500;
+            color:rgba(212,157,59,1);
+          }
+          .list-box-bottom {
+            width: 95%;
+            margin: 0.8rem auto 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+          }
+          .list-box-bottom>div {
+            width: 3rem;
+            background-color: rgb(212,157,59);
+            color: white;
+            font-size: 14px;
+            text-align: center;
+            margin: 0 0.25rem;
+            border-radius: 5px;
+            padding: 0.2rem 0;
+          }
+          .alert{
+            font-size: 0.55rem;
+            text-align: center;
+            height: 5rem;
+            line-height: 5rem;
+          }
+      </style>
+  </head>
+  <body>
+      <section id="app">
+        <div class="list" v-for="item in list">
+          <div class="list-box">
+            <div class="list-box-top">
+              <div>
+                <img src="../../image/store/morentouxiang.png">
+                <p>{{item.user_id}}</p>
+              </div>
+              <div>数量：{{item.num}}粒</div>
+              <div>
+                <span>{{formatDateTime(item.createtime * 1000)}}</span>
+              </div>
+            </div>
+            <div class="list-box-bottom">
+              <div @click="change('del', item.id)">撤销</div>
+              <div @click="change('update', item.id)">更新</div>
+            </div>
+          </div>
+        </div>
+        <div class="alert" v-if="list.length == 0">暂时无挂卖记录</div>
+      </section>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript" src="../../script/vue.js"></script>
+  <script type="text/javascript" src="../../script/common.js"></script>
+  <script type="text/javascript" src="../../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        let vue = new Vue({
+          el:"#app",
+          data:{list: []},
+          mounted:function(){
+            this.get_jilu();
+          },
+          methods:{
+            // 获取挂卖记录
+            get_jilu: function(){
+              post("guamai/showList").then( res => {
+                vue.list = res.data;
+              });
+            },
+            // 时间戳转化函数
+            formatDateTime: function(inputTime){
+              var date = new Date(inputTime);
+      				var y = date.getFullYear();
+      				var m = date.getMonth() + 1;
+      				m = m < 10 ? ('0' + m) : m;
+      				var d = date.getDate();
+      				d = d < 10 ? ('0' + d) : d;
+      				var h = date.getHours();
+      				h = h < 10 ? ('0' + h) : h;
+      				var minute = date.getMinutes();
+      				var second = date.getSeconds();
+      				minute = minute < 10 ? ('0' + minute) : minute;
+      				second = second < 10 ? ('0' + second) : second;
+      				return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second;
+            },
+            // 更新或者撤销的函数
+            change: function(state, i){
+              post("guamai/guamai_operate", {id: i, event: state}).then( res => {
+                vue.get_jilu();
+                api.toast({
+                    msg: res.msg,
+                    duration: 2000,
+                    location: 'bottom'
+                });
+                // 发起事件监听 商城页面发起请求获取总挂卖明细
+                api.sendEvent({
+                  name: 'guamai_success',
+                });
+                api.sendEvent({
+                  name: 'userinfo',
+                });
+
+              });
+            },
+          },
+        });
+
+      };
+  </script>
+  </html>

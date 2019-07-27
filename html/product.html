@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <style>
+        header {
+            width: 100%;
+            height: 18.7rem;
+            margin-top: 25px;
+        }
+
+        header img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .content {
+            width: 92%;
+            height: 6.5rem;
+            margin: 0 auto;
+        }
+
+        .content .price {
+            width: 100%;
+            font-size: 1rem;
+            height: 2rem;
+            line-height: 2rem;
+            color: rgba(247, 73, 73, 1);
+        }
+
+        .content .introduce {
+            width: 100%;
+            font-size: 0.85rem;
+        }
+
+        .content .num {
+            width: 100%;
+            height: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+        }
+
+        .content .num div {
+            width: 5rem;
+            height: 1.3rem;
+            border: 1px solid rgba(181, 181, 181, 0.5);
+            color: rgba(181, 181, 181, 0.7);
+            display: flex;
+            align-items: center;
+            border-radius: 3px;
+        }
+
+        .content .num div span {
+            display: inline-block;
+            width: 30%;
+            text-align: center;
+            font-size: 10px;
+            height: 100%;
+            line-height: 1.3rem;
+        }
+
+        .content .num div span:nth-child(1) {
+            border-right: 1px solid rgba(181, 181, 181, 0.5)
+        }
+
+        .content .num div span:nth-child(3) {
+            border-left: 1px solid rgba(181, 181, 181, 0.5)
+        }
+
+        .content .num div input {
+            width: 40%;
+            text-align: center;
+            font-size: 13px;
+            color:rgba(8,8,8,0.7);
+        }
+        .bigimg {
+          width: 100%;
+          margin-bottom: 3.3rem;
+        }
+        .bigimg img {
+          width: 100%;
+        }
+        .bottom{
+          width: 92%;
+          height: 2.3rem;
+          background-color: rgba(212,157,59,1);
+          position: fixed;
+          left: 50%;
+          transform: translateX(-50%);
+          bottom: 0;
+          text-align: center;
+          color: white;
+          line-height: 2.3rem;
+          font-size: 0.9rem;
+          border-radius: 7px;
+        }
+    </style>
+</head>
+
+<body>
+    <section id="app">
+        <header>
+            <img src="../image/product/header.png">
+        </header>
+        <section class="content">
+            <p class="price">￥{{product.price}}</p>
+            <p class="introduce">{{product.name}}</p>
+            <div class="num">
+                <span>购买数量</span>
+                <div>
+                    <span class="aui-iconfont aui-icon-minus" @click="less()"></span>
+                    <input type="number" v-model="num">
+                    <span class="aui-iconfont aui-icon-plus" @click="add()"></span>
+                </div>
+            </div>
+        </section>
+        <section class="bigimg">
+          <img src="../image/product/body.png">
+        </section>
+        <section class="bottom" @click="buy()">立即购买</section>
+    </section>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/fastclick.js"></script>
+<script type="text/javascript" src="../script/aui-toast.js"></script>
+<script type="text/javascript">
+    FastClick.attach(document.body);
+    apiready = function() {
+        let vue = new Vue({
+            el: "#app",
+            data: {
+                num: 1,
+                product: {},//产品信息
+                token: $api.getStorage('token'),
+            },
+            methods:{
+              less: function(){
+                if (vue.num > 1) {
+                  vue.num--;
+                }
+              },
+              add: function(){
+                vue.num++;
+              },
+              // 立即购买
+              buy: function(){
+                if (vue.token) {
+                  post('orders/show', {id: 1}).then(res=>{
+                    openWin('confirm_order', true, {data: res.data, num: vue.num})
+                  })
+                } else {
+                  openWin('login')
+                }
+              }
+            },
+            mounted: function(){
+              post('index/details').then(res=> {
+                vue.product = res.data;
+              });
+            }
+        });
+        // 监听是否退出登录
+        api.addEventListener({
+          name: 'logout'
+        }, function(ret, err) {
+          vue.token = $api.getStorage("token");
+        });
+        // 监听是否登录
+        api.addEventListener({
+          name: 'login'
+        }, function(ret, err) {
+          vue.token = $api.getStorage("token");
+        });
+    };
+</script>
+
+</html>

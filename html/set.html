@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>设置</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+        #header{
+          width: 100%;
+          height: 44px;
+          background-color: rgb(212,157,59);
+        }
+        .list {
+          width: 100%;
+          height: 0.5rem;
+          background-color: #F8EFDF;
+        }
+      </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-pull-left aui-btn" onclick="api.closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">设置</div>
+      </div>
+      <div class="list"></div>
+      <div class="aui-content">
+        <ul class="aui-list aui-list-in">
+          <li class="aui-list-item aui-list-item-middle">
+              <div class="aui-list-item-inner aui-list-item-arrow" onclick="openWin('person_msg', true)" tapmode>个人信息</div>
+          </li>
+          <li class="aui-list-item aui-list-item-middle">
+              <div class="aui-list-item-inner aui-list-item-arrow" onclick="openWin('my_address', true, {type: 1})" tapmode>我的地址</div>
+          </li>
+          <li class="aui-list-item aui-list-item-middle">
+              <div class="aui-list-item-inner aui-list-item-arrow" onclick="openWin('realname', true)" tapmode>实名认证</div>
+          </li>
+          <li class="aui-list-item aui-list-item-middle" onclick="banben()">
+              <div class="aui-list-item-inner aui-list-item-arrow">版本更新
+                <!-- <div style="font-size: 0.6rem; color: gray;" id="change"></div> -->
+              </div>
+          </li>
+          <li class="aui-list-item aui-list-item-middle">
+              <div class="aui-list-item-inner aui-list-item-arrow" onclick="openWin('about', false)" tapmode>关于我们</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        $api.fixStatusBar($api.byId('header'));
+        // var mam = api.require('mam');
+        // mam.checkUpdate(function(ret, err){
+        //   if (ret.status.update) {
+        //     $api.byId('change').innerHTML = '点击更新版本';
+        //   }else {
+        //     $api.byId('change').innerHTML = '已是最新版本';
+        //   }
+        // });
+      };
+
+      function banben(){
+        var mam = api.require('mam');
+        mam.checkUpdate(function(ret, err){
+          if (ret.result.update && ret.result.closed == false) {
+            var str = '最新版本:' + ret.result.version + '\n更新描述\n:' + ret.result.updateTip + '\n发布时间:' + ret.result.time;
+            api.confirm({
+                title: '更新提示',
+                msg: str,
+                buttons: ['取消','立即更新' ]
+            }, function(ret1, err){
+                if (ret1.buttonIndex == 2) {
+                  if (api.systemType == "android") {
+                    api.download({
+                        url: ret.result.source,
+                        report: true,
+                    },function(ret2, err){
+                        if (ret2 && 0 == ret2.state) {
+                          api.toast({
+                            msg : "正在下载应用" + ret2.percent + "%",
+                            duration : 2000
+                          });
+                        }
+                        if (ret2 && 1 == ret2.state) {
+                          var savePath = ret2.savePath;
+                          api.installApp({
+                            appUri : savePath
+                          });
+                        }
+                    });
+                  }
+                  if (api.systemType == "ios") {
+                    api.installApp({
+                        appUri : ret.result.source
+                    });
+                  }
+                }
+            });
+          } else {
+            api.toast({msg: '已是最新版本'})
+          }
+        });
+      }
+  </script>
+  </html>

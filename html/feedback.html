@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>申诉中心</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+          html,body{
+            width: 100%;
+            height: 100%;
+          }
+          #app{
+            height: 100%;
+            background-color: #fff;
+          }
+          #header{
+            width: 100%;
+            height: 44px;
+            background-color: rgb(212,157,59);
+          }
+          .content {
+            width: 100%;
+            background-color: rgba(212,157,59,0.16);
+            padding: 0.12rem 0;
+          }
+          .textarea {
+            width: 100%;
+            height: 10rem;
+            background-color: #fff;
+            margin-top: 0.5rem;
+          }
+          .textarea>p, .contact>p {
+            font-size: 15px;
+            width: 90%;
+            height: 1.5rem;
+            line-height: 1.5rem;
+            margin: 0 auto;
+          }
+          .textarea>textarea {
+            width: 90%;
+            height: 8rem;
+            margin: 0 auto;
+            color: #757575;
+            font-size: 15px;
+          }
+          .contact {
+            width: 100%;
+            height: 4rem;
+            background-color: #fff;
+            margin: 0.5rem 0;
+          }
+          .contact>textarea {
+            width: 90%;
+            height: 2rem;
+            margin: 0 auto;
+            color: #757575;
+            font-size: 15px;
+          }
+          .button {
+            width:60%;
+            height: 2rem;
+            background-color: rgb(212,157,59);
+            border-radius: 1rem;
+            line-height: 2rem;
+            text-align: center;
+            margin: 2.5rem auto 0;
+            font-size: 18px;
+            color: white;
+          }
+          .camera{
+            width: 100%;
+            height: 5rem;
+            background-color: #fff;
+          }
+          .img {
+            width: 4rem;
+            height: 4rem;
+            margin-left: 3%;
+            border: 1px gray dotted;
+            position: relative;
+          }
+          .img img {
+            width: 65%;
+            height: 50%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+          }
+          .camera p{
+            width: 4rem;
+            text-align: center;
+            margin-left: 3%;
+            font-size: 14px;
+          }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-pull-left aui-btn" onclick="api.closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">申诉中心</div>
+      </header>
+      <div class="content">
+        <div class="textarea">
+          <p>您的想法和建议</p>
+          <textarea v-model="textarea"></textarea>
+        </div>
+        <div class="camera">
+          <div class="img" @click="touxiang()"><img :src="img || '../image/my/camera.png'"></div>
+          <p>添加图片</p>
+        </div>
+        <div class="contact">
+          <p>联系方式(QQ或邮箱)</p>
+          <textarea v-model="contact"></textarea>
+        </div>
+      </div>
+      <div class="button" @click="tijiao()">提交</div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        $api.fixStatusBar($api.byId('header'));
+        var vue = new Vue({
+          el:"#app",
+          data:{
+            textarea: null,
+            contact: null,
+            img: null,
+          },
+          methods:{
+            //提交意见
+            tijiao: function(){
+              if (vue.textarea && vue.contact) {
+                post('user/opinion', { contents: vue.textarea, email: vue.contact, img: vue.img }).then(res => {
+                  api.toast({
+                      msg: res.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                  setTimeout(function(){api.closeWin()}, 2000);
+                });
+              } else {
+                api.toast({
+                    msg: '请输入完整信息',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+              }
+            },
+            // 选择图片
+            touxiang:function(){
+              api.actionSheet({
+                  title : '上传照片',
+                  cancelTitle : '取消',
+                  buttons : ['拍照', '手机相册']
+              }, function(ret, err) {
+                  if (ret) {
+                      if (ret.buttonIndex == 1) {
+                          api.getPicture({
+                              sourceType : 'camera',
+                              encodingType : 'jpg',
+                              mediaValue : 'pic',
+                              destinationType : 'url',
+                              allowEdit : false,
+                              quality : 100,
+                              saveToPhotoAlbum : false
+                          }, function(ret, err) {
+                              if (ret.data) {
+                                vue.img = ret.data;
+                                vue.saveImg(ret.data, 1);
+                              } else {
+                                  api.toast({
+                                      msg : '图像获取失败',
+                                      duration : 3000,
+                                      location : 'bottom'
+                                  });
+                              }
+                          });
+                      } else if (ret.buttonIndex == 2) {
+                          //手机相册选图片
+                          api.getPicture({
+                              sourceType : 'library',
+                              encodingType : 'png',
+                              mediaValue : 'pic',
+                              destinationType : 'url',
+                              allowEdit : true,
+                              quality : 100,
+                              preview:true,
+                              saveToPhotoAlbum : false
+                          }, function(ret, err) {
+                              if (ret.data) {
+                                vue.img = ret.data;
+                                vue.saveImg(ret.data, 2);
+                              } else {
+                                  api.toast({
+                                      msg : '图像获取失败',
+                                      duration : 3000,
+                                      location : 'bottom'
+                                  });
+                              }
+                          });
+                      }
+                  }
+              });
+            },
+            // 上传头像
+            saveImg: function(path, type){
+              api.ajax({
+                  url : 'http://puti.maiyatang.info/api/common/upload',
+                  method : 'post',
+                  headers:{
+                    'token': $api.getStorage('token')
+                  },
+                  data : {
+                      files : {
+                          file : path
+                      }
+                  }
+              }, function(ret, err) {
+                  api.hideProgress();
+                  if (ret.code == 1) {
+                    vue.img = 'http://puti.maiyatang.info' + ret.data.url;
+                    api.toast({
+                        msg : ret.msg
+                    });
+                  } else {
+                    api.toast({
+                        msg : ret.msg
+                    });
+                  }
+              });
+            },
+          }
+        });
+      };
+  </script>
+  </html>

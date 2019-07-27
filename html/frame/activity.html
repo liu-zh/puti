@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>活动_frame</title>
+      <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+      <style>
+          body{
+            background-color: #fff;
+          }
+          .list{
+            width: 92%;
+            height: 6rem;
+            border-radius: 0.5rem;
+            background-color: #FAFAFA;
+            margin: 1rem auto 0;
+            border: 0.05rem #E6E6E6 solid;
+          }
+          .list .top{
+            width: 96%;
+            height: 1.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0 auto;
+          }
+          .list .top span:nth-child(1){
+            font-size: 0.8rem;
+          }
+          .list .top span:nth-child(2){
+            font-size: 0.6rem;
+            color: gray;
+          }
+          .list .bottom{
+            width: 96%;
+            height: 3.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 0.2rem;
+          }
+          .list .bottom>img{
+            width: 3.8rem;
+            height: 100%;
+            border-radius: 0.2rem;
+            margin-right: 1rem;
+          }
+          .list .bottom>div{
+            height: 72%;
+            font-size: 0.65rem;
+            display: -webkit-box;
+            -webkit-line-clamp:3;
+            -webkit-box-orient:vertical;
+            overflow:hidden;
+            text-overflow: ellipsis;
+          }
+          .alert{
+            width: 100%;
+            height: 2rem;
+            text-align: center;
+            font-size: 0.7rem;
+            line-height: 2rem;
+          }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <div class="list" v-for="it in list" @click="openWin('activity_details', true, {data: it})">
+        <div class="top">
+          <span v-text="it.title"></span>
+          <span v-text="'截止日期: ' + formatDateTime(it.endtime * 1000)"></span>
+        </div>
+        <div class="bottom">
+          <img :src="'http://puti.maiyatang.info' + it.image">
+          <div v-html="it.content"></div>
+        </div>
+      </div>
+      <div class="alert" v-if="list.length == 0">暂无活动</div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript" src="../../script/vue.js"></script>
+  <script type="text/javascript" src="../../script/common.js"></script>
+  <script type="text/javascript" src="../../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        //获取活动
+        get('about/hd_lists').then(res=>{
+          vue.list = res.data;
+        });
+        let vue = new Vue({
+          el:"#app",
+          data:{
+            list:[],//活动列表
+          },
+          mounted: function(){
+
+          },
+          methods:{
+            formatDateTime: function(inputTime){
+              var date = new Date(inputTime);
+              var date1 = new Date();
+              var y = date.getFullYear();
+              var m = date.getMonth() + 1;
+              m = m < 10 ? ('0' + m) : m;
+              var d = date.getDate();
+              d = d < 10 ? ('0' + d) : d;
+              var h = date.getHours();
+              h = h < 10 ? ('0' + h) : h;
+              var minute = date.getMinutes();
+              var second = date.getSeconds();
+              minute = minute < 10 ? ('0' + minute) : minute;
+              second = second < 10 ? ('0' + second) : second;
+              return y + '年' + m + '月' + d + '日' + h + ":" + minute;
+            },
+
+          }
+        });
+      };
+  </script>
+  </html>

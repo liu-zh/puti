@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>帮助中心</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+        #header{
+          width: 100%;
+          height: 44px;
+          background-color: rgb(212,157,59);
+        }
+        .line{
+          width: 100%;
+          height: 0.3rem;
+          background-color: rgba(212,157,59,0.16);
+        }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-pull-left aui-btn" onclick="api.closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">帮助中心</div>
+      </header>
+      <div class="line" id="line"></div>
+      <div class="aui-content aui-margin-b-10">
+        <ul class="aui-list aui-list-in">
+          <li class="aui-list-item aui-list-item-middle" v-for="item in helpMsg" @click="openWin('help_center_details', false, {content: item.congtents, name: item.name})">
+              <div class="aui-list-item-inner aui-list-item-arrow">{{item.name}}</div>
+          </li>
+        </ul>
+      </div>
+      <div class="aui-content">
+        <ul class="aui-list aui-list-in">
+          <li class="aui-list-item aui-list-item-middle" onclick="openWin('feedback', true)">
+              <div class="aui-list-item-inner aui-list-item-arrow">申诉中心</div>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        $api.fixStatusBar($api.byId('header'));
+        var toast = new auiToast();
+        let vue = new Vue({
+          el: '#app',
+          data:{helpMsg: null},
+          mounted: function(){
+            post('index/helper').then( res => {
+              vue.helpMsg = res.data;
+            })
+          },
+        });
+      };
+  </script>
+  </html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>实名认证</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+          body,html{
+            width: 100%;
+            height: 100%;
+          }
+          #app {
+            width: 100%;
+            height: 100%;
+            position: relative;
+          }
+          .bg{
+            width: 100%;
+            height: 80%;
+            background: url(../image/my/bg_login.png);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            opacity: 0.1;
+            position: absolute;
+            left: 0;
+            top: 15%;
+          }
+          #header {
+            background-color:rgba(255,255,255,0);
+            color: black;
+          }
+          #header span {
+            color: gray;
+            font-weight: bold;
+          }
+          .content {
+            width: 100%;
+            position: absolute;
+            left: 0;
+          }
+          input::-webkit-input-placeholder {
+            font-size: 14px;
+            text-align: right;
+          }
+          .aui-content, .aui-list, .aui-list-item, .aui-list-item-middle{
+            background-color: rgba(0,0,0,0) !important;
+          }
+          .button {
+            font-size: 16px;
+            text-align: center;
+            width: 80%;
+            height: 2rem;
+            line-height: 2rem;
+            background-color: rgba(212,157,59,0.5);
+            border-radius: 0.35rem;
+            margin: 3rem auto 0;
+            font-size: 0.9rem;
+            color: white;
+          }
+          input{
+            text-align: right;
+          }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-pull-left aui-btn" onclick="api.closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">实名认证</div>
+      </header>
+      <div class="bg"></div>
+      <div class="content">
+        <div class="aui-content">
+          <ul class="aui-list aui-list-in">
+            <li class="aui-list-item aui-list-item-middle">
+              <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">姓名</div>
+                <div class="aui-list-item-right"><input type="text" placeholder="请输入姓名" v-model="name"></div>
+              </div>
+            </li>
+            <li class="aui-list-item aui-list-item-middle">
+              <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">身份证号</div>
+                <div class="aui-list-item-right"><input type="text" placeholder="请输入身份证号" v-model="card_ID" @change="card_ID_change()"></div>
+              </div>
+            </li>
+            <li class="aui-list-item aui-list-item-middle">
+              <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">绑定手机号</div>
+                <div class="aui-list-item-right"><input type="number" placeholder="请输入手机号" v-model="tel"></div>
+              </div>
+            </li>
+            <li class="aui-list-item aui-list-item-middle">
+              <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">上传身份证正反面照片</div>
+                <div class="aui-list-item-right" @click="idcard()"><img src="../image/my/camera.png" style="width:2rem; height: 1.5rem;"></div>
+              </div>
+            </li>
+            <li class="aui-list-item aui-list-item-middle">
+              <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">安全密码(提现/付款)</div>
+                <div class="aui-list-item-right"><input type="password" placeholder="请输入六位安全密码" v-model="safepwd" @change="password()"></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="button" @click="upload()">确定</div>
+      </div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        $api.fixStatusBar($api.dom('header'));
+        var toast = new auiToast();
+        let vue = new Vue({
+          el:"#app",
+          data:{
+            name: null,// 姓名
+            card_ID: null,// 身份证号
+            tel: null, //手机号
+            safepwd: null,// 支付密码
+            cardimg1: null, //身份证正面照
+            cardimg2: null, //身份证反面照
+          },
+          methods:{
+            // 上传身份证照片
+            idcard:function(){
+              api.actionSheet({
+                  title: '上传身份证照片',
+                  cancelTitle: '取消',
+                  buttons: ['正面照','反面照']
+              }, function(ret, err){
+                    if(ret.buttonIndex == 1 || ret.buttonIndex == 2) {
+                      api.getPicture({
+                          sourceType : 'camera',
+                          encodingType : 'jpg',
+                          mediaValue : 'pic',
+                          destinationType : 'url',
+                          allowEdit : false,
+                          quality : 100,
+                          saveToPhotoAlbum : false
+                      }, function(ret1, err) {
+                          if (ret1.data) {
+                             vue.saveImg(ret1.data, ret.buttonIndex);
+                          } else {
+                              api.toast({
+                                  msg : '图像获取失败',
+                                  duration : 3000,
+                                  location : 'bottom'
+                              });
+                          }
+                      });
+                  }
+              });
+
+            },
+            // 上传头像
+            saveImg: function(path, type){
+              api.showProgress({
+                  title: '上传中...',
+                  text: '先喝杯茶...',
+              });
+              api.ajax({
+                  url : 'http://puti.maiyatang.info/api/common/upload',
+                  method : 'post',
+                  headers:{
+                    'token': $api.getStorage('token')
+                  },
+                  data : {
+                      files : {
+                          file : path
+                      }
+                  }
+              }, function(ret, err) {
+                  api.hideProgress();
+                  if (ret.code == 1) {
+                    api.toast({
+                        msg : ret.msg
+                    });
+                    if (type == 1) {
+                      vue.cardimg1 = 'http://puti.maiyatang.info' + ret.data.url;
+                    }
+                    if (type == 2) {
+                      vue.cardimg2 = 'http://puti.maiyatang.info' + ret.data.url;
+                    }
+                  }
+              });
+            },
+            // 判断身份证号是否正确
+            card_ID_change: function(){
+              var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+              if (reg.test(vue.card_ID) == false) {
+                toast.fail({
+                  title:"身份证号错误",
+                  duration:2000
+                });
+              }
+            },
+            //判断支付密码是否符合要求
+            password: function(){
+              var reg = /^\d{6}$/;
+              if (reg.test(vue.safepwd) == false) {
+                toast.fail({
+                  title:"请输入六位数字密码",
+                  duration:2000
+                });
+              }
+            },
+            // 上传实名认证信息
+            upload: function(){
+              console.log(vue.cardimg1, vue.cardimg1)
+              if(vue.name && vue.card_ID && vue.tel && vue.safepwd && vue.cardimg1 && vue.cardimg2) {
+                post('user/card_auth', {name: vue.name, card_ID: vue.card_ID, tel: vue.tel, safepwd: vue.safepwd, cardimg1: vue.cardimg1, cardimg2: vue.cardimg2}).then(res=>{
+                  console.log(JSON.stringify(res));
+                  api.toast({
+                      msg: res.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                });
+              } else {
+                toast.fail({
+                  title:"请输入完整信息",
+                  duration:2000
+                });
+              }
+            },
+          },
+        });
+      };
+  </script>
+  </html>

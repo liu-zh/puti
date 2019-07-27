@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>登录</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <style>
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+        }
+
+        #app {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .bg {
+            width: 100%;
+            height: 80%;
+            background: url(../image/my/bg_login.png);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            opacity: 0.1;
+            position: absolute;
+            left: 0;
+            top: 15%;
+        }
+
+        #header {
+            background-color: rgba(255, 255, 255, 0);
+        }
+
+        #header span {
+            color: gray;
+            font-weight: bold;
+        }
+
+        .content {
+            width: 100%;
+            position: absolute;
+            left: 0;
+        }
+
+        .touxiang {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            margin: 1.5rem auto 0;
+        }
+
+        .touxiang>img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .login {
+            width: 80%;
+            margin: 1.5rem auto;
+        }
+
+        .login>div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #848383;
+        }
+
+        .login>div:nth-child(2) {
+            border-bottom: 1px solid #908F8F;
+            margin-top: 1rem;
+        }
+
+        .login>div>span {
+            display: inline-block;
+            width: 2rem;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .login>div>input {
+            width: 80%;
+            font-size: 16px;
+            height: 1.5rem;
+        }
+
+        input::-webkit-input-placeholder {
+            font-size: 16px;
+        }
+
+        .login .forget {
+            width: 100%;
+            text-align: right;
+            font-size: 15px;
+            color: #48A0F5;
+        }
+
+        .button {
+            width: 100%;
+            margin-top: 3rem;
+        }
+
+        .button>div {
+            font-size: 18px;
+            text-align: center;
+            width: 8rem;
+            height: 2rem;
+            line-height: 2rem;
+            background-color: rgba(212, 157, 59, 0.5);
+            border-radius: 0.4rem;
+            margin: 0 auto;
+        }
+
+        .button>div:nth-child(2) {
+            margin-top: 0.5rem;
+            background-color: rgba(0, 0, 0, 0.35);
+        }
+
+        .bottom {
+            width: 65%;
+            margin: 2.5rem auto 0;
+        }
+
+        .bottom .top-line {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: rgb(143, 143, 143);
+            font-size: 13px;
+        }
+
+        .bottom .top-line div {
+            width: 28%;
+            height: 1px;
+            background-color: rgb(143, 143, 143);
+        }
+
+        .bottom .icon {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .bottom .icon>div {
+            width: 50%;
+            text-align: center;
+        }
+
+        .bottom .icon>div>span {
+            color: rgba(212, 157, 59, 1);
+            font-size: 1.5rem;
+        }
+
+        .bottom .icon>div>p {
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <section id="app">
+        <header class="aui-bar aui-bar-nav" id="header">
+            <a class="aui-pull-left aui-btn" onclick="api.closeWin()">
+                <span class="aui-iconfont aui-icon-left"></span>
+            </a>
+        </header>
+        <div class="bg"></div>
+        <div class="content">
+            <div class="touxiang"><img src="../image/my/morentouxiang.png"></div>
+            <div class="login">
+                <div>
+                    <span>账号</span>
+                    <input type="number" placeholder="请输入用户名/手机号" v-model="username">
+                </div>
+                <div>
+                    <span>密码</span>
+                    <input type="password" placeholder="请输入您的密码" v-model="password">
+                </div>
+                <p class="forget" onclick="openWin('forget_password', false)">忘记密码?</p>
+            </div>
+            <div class="button">
+                <div @click="login()">登录</div>
+                <div onclick="openWin('registered', false)" tapmode>注册</div>
+            </div>
+            <div class="bottom">
+                <div class="top-line">
+                    <div></div>
+                    <p>其他方式登录</p>
+                    <div></div>
+                </div>
+                <div class="icon">
+                    <div>
+                        <span class="aui-iconfont aui-icon-qq"></span>
+                        <p>qq</p>
+                    </div>
+                    <div>
+                        <span class="aui-iconfont aui-icon-wechat"></span>
+                        <p>微信</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/sha1.min.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/aui-toast.js"></script>
+<script type="text/javascript">
+    apiready = function() {
+        $api.fixStatusBar($api.byId('header'));
+        var toast = new auiToast();
+        let vue = new Vue({
+            el: "#app",
+            data: {
+                username: null, // 账号
+                password: null, // 密码
+            },
+            methods: {
+                login: function() {
+                    if (vue.username == null && vue.password == null) {
+                        toast.fail({
+                            title: "请输入手机号或密码",
+                            duration: 2000
+                        });
+                    } else {
+                        post('login/index', {
+                            account: vue.username,
+                            password: vue.password
+                        }).then(res => {
+                          console.log(JSON.stringify(res));
+                            $api.setStorage('token', res.data.token);
+                            $api.setStorage('uid', res.data.uid);
+                            vue.rong(res.data.uid, res.data.mobile, res.data.avatar);
+                            api.sendEvent({
+                                name: 'login',
+                            });
+                            toast.success({
+                                title: res.msg,
+                                duration: 2000
+                            });
+                            setTimeout(function() {
+                                api.closeWin()
+                            }, 1000);
+                        });
+                    }
+                },
+                // 获取融云的token
+                rong: function(id, name, tx) {
+                    var appKey = "0vnjpoad03udz";
+                    var appSecret = "11KZtbQ3pOxJ06";
+                    var nonce = Math.floor(Math.random() * 1000000); //随机数
+                    var timestamp = Date.now(); //时间戳
+                    var signature = sha1("" + appSecret + nonce + timestamp); //数据签名(通过哈希加密计算)
+                    api.ajax({
+                        url: "http://api.cn.ronghub.com/user/getToken.json",
+                        method: "post",
+                        headers: {
+                            "RC-App-Key": appKey,
+                            "RC-Nonce": "" + nonce,
+                            "RC-Timestamp": "" + timestamp,
+                            "RC-Signature": "" + signature,
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        data: {
+                            values: {
+                                userId: id,
+                                name: name,
+                                portraitUri: tx
+                            }
+                        }
+                    }, function(ret, err) {
+                        console.log(JSON.stringify(ret));
+                        if (ret) {
+                            $api.setStorage('rong_token', ret.token); //将token存储到本地
+                            $api.setStorage('userid', id);
+                            $api.setStorage('username', name);
+                            $api.setStorage('usertx', tx);
+                        } else {
+                          api.toast({
+                            msg : '获取token失败',
+                            duration : 2000,
+                            location : 'bottom'
+                          });
+                        }
+                    });
+                },
+            }
+        });
+    };
+</script>
+
+</html>

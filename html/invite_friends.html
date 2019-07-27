@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>邀请好友</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+          body, html{
+            height: 100%
+          }
+          #app{
+            width: 100%;
+            height: 100%;
+            background: url(../image/my/invite_bg.png);
+            background-size: 100% 100%;
+          }
+          #header{
+            width: 100%;
+            height: 44px;
+            background-color: rgb(212,157,59);
+          }
+          .touxiang{
+            width: 4.1rem;
+            height: 4.3rem;
+            margin: 1.5rem auto 0;
+          }
+          .touxiang img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+          }
+          .name{
+            text-align: center;
+            font-size: 17px;
+            height: 1.5rem;
+            line-height: 1.5rem;
+            color:rgba(0,0,0,1);
+          }
+          .details {
+            font-size: 15px;
+            font-weight:400;
+            color:rgba(200,192,192,1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .details img {
+            width: 0.6rem;
+            height: 0.7rem;
+          }
+          .details span:nth-child(2) {
+            display: inline-block;
+            margin:0 0.2rem;
+          }
+          .erweima {
+            width: 10rem;
+            height: 10rem;
+            margin: 0 auto;
+          }
+          .erweima img {
+            width: 100%;
+            height: 100%;
+          }
+          .bottom{
+            width: 92%;
+            margin: 0 auto;
+          }
+          .bottom p{
+            font-size: 15px;
+            color:rgba(145,145,145,1);
+          }
+          .bottom p:nth-child(1){
+            height: 1.5rem;
+            line-height: 1.5rem;
+          }
+          .button{
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1.5rem;
+          }
+          .button button {
+            width: 40%;
+            height: 2rem;
+            background-color: rgba(212,157,59, 0.5);
+          }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-pull-left aui-btn" onclick="api.closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">邀请好友</div>
+      </header>
+      <div class="touxiang"><img :src="userMsg.avatar || '../image/my/morentouxiang.png'"></div>
+      <div class="name">{{userMsg.nickname || userMsg.mobile}}</div>
+      <!-- <div class="details">
+        <img src="../image/my/dingwei.png">
+        <span>郑州</span>
+        <span>20岁</span>
+      </div> -->
+      <div class="erweima"><img :src="imgpath"></div>
+      <div class="button">
+        <button @click="kouling()">复制推广链接</button>
+        <button @click="saveimg()">保存二维码</button>
+      </div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        $api.fixStatusBar($api.byId('header'));
+        var toast = new auiToast();
+        let vue = new Vue({
+          el:"#app",
+          data:{
+            imgpath:null,
+            userMsg: {},
+          },
+          mounted: function(){
+            userinfo().then(res=>{
+              vue.userMsg = res
+            })
+          },
+          methods:{
+            //复制邀请链接
+           kouling:function(){
+             var clipBoard = api.require('clipBoard');
+             clipBoard.set({
+                 value: '这是一条邀请链接'// 可以让后台传链接,保存在本地
+             }, function(ret){
+                 if(ret && ret.status) {
+                     toast.success({title: '^_^ 复制成功'});
+                 }
+             });
+           },
+           // 保存图片
+           saveimg: function(){
+              api.saveMediaToAlbum({
+                path: vue.imgpath
+              }, function(ret, err){
+                if (ret && ret.status) {
+                  toast.success({title: '^_^ 保存成功'});
+                } else {
+                  alert('保存失败');
+                }
+              })
+
+           },
+          }
+        });
+
+        // 生成二维码
+        var FNScanner = api.require('FNScanner');
+        FNScanner.encodeImg({
+          content: 'http://downloadpkg.apicloud.com/app/download?path=http://A6003463164800.qiniucdn.apicloud-system.com/f0a8bd610dbb2f1118ebbd6c2b7cb704_d',
+          saveImg: {
+            path: 'fs://image/qr.png',
+            w: 200,
+            h: 200
+         }
+        }, function(ret, err){
+          if (ret.status) {
+            vue.imgpath = ret.imgPath;
+          } else {
+            api.toast({
+                msg: '二维码获取失败',
+                duration: 2000,
+                location: 'bottom'
+            });
+
+          }
+        });
+      };
+
+  </script>
+  </html>

@@ -1,0 +1,194 @@
+body{
+  background-color: #fff;
+}
+.wrap {
+  width: 100%;
+  background-color: #fff;
+}
+.wrap > .line{
+  width: 100%;
+  height: 0.5rem;
+  background-color: rgba(212,157,59,0.16);
+}
+.box {
+  width: 92%;
+  margin: 0 auto;
+  padding-top: 0.5rem;
+  background-color: white;
+}
+.title {
+  width: 92%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  height: 1.5rem;
+  margin:0 auto;
+}
+.title span:nth-child(1) {
+  color: black;
+}
+.title span:nth-child(2) {
+  color: #CF9226;
+}
+.details {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.details-left {
+  width: 20%;
+  height: 3.5rem;
+}
+.details-left>img {
+  width: 70%;
+  height: 100%;
+}
+.details-right {
+  width: 80%;
+  font-size: 16px;
+}
+.details-right-top {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.details-right-top .text{
+  width: 77%;
+  color: #737272;
+}
+.price p:nth-child(1){
+  color: #737272;
+  text-align: right;
+}
+.price p:nth-child(2){
+  color: #979696;
+  text-align: right;
+}
+.details-right-bottom{
+  display: inline-block;
+  color: #737272;
+  font-size: 11px;
+  padding:0.2rem 0.2rem;
+  background-color: rgba(212,157,59,0.16);
+  margin-top: 0.5rem;
+}
+.goods {
+  width: 100%;
+  text-align: right;
+  border-bottom: 1px #C7C7C7 dotted;
+  height: 2.3rem;
+  line-height: 2.3rem;
+}
+.goods span:nth-child(1) {
+  color: #737272;
+  font-size: 15px;
+}
+.goods span:nth-child(2) {
+  font-size: 16px;
+}
+.bottom {
+  width: 94%;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 15px;
+}
+.bottom .name, .bottom .tuijian{
+  width: 3rem;
+  height: 1.2rem;
+  text-align: center;
+  line-height: 1.2rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  border-radius: 0.6rem;
+  border:1px solid rgb(212,157,59);
+}
+.bottom .tuijian{
+  margin: 0 0.5rem;
+}
+.bottom .pay{
+  min-width: 2.6rem;
+  background-color: rgb(212,157,59);
+  border-radius: 0.5rem;
+  height: 1.2rem;
+  text-align: center;
+  line-height: 1.2rem;
+  color: white;
+  padding: 0 0.5rem;
+}
+/*
+退货页面的样式  其他为公用样式
+*/
+.why {
+  width: 100%;
+}
+.why-top {
+  width: 92%;
+  margin: 0 auto;
+  font-size: 15px;
+  color: #3D3D3D;
+  height: 2rem;
+  line-height: 2rem;
+}
+.why-top .aui-icon-right{
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: 0.3rem;
+}
+.why-middle{
+  width: 92%;
+  height: 1rem;
+  margin: 0 auto;
+  line-height: 1rem;
+  font-size: 15px;
+}
+.why-middle span:nth-child(2){
+  display: inline-block;
+  color: #FC3939;
+  margin-left: 0.3rem;
+}
+.why-bottom {
+  width: 92%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  height: 2rem;
+}
+.why-bottom input {
+  width: 75%;
+  margin-left: 0.2rem;
+}
+.upload {
+  width: 90%;
+  margin:0 auto;
+}
+.upload div:nth-child(1){
+  font-size: 13px;
+  height: 1.7rem;
+  line-height: 1.7rem;
+}
+.upload div:nth-child(2){
+  width: 3rem;
+  height: 3rem;
+  border: 1px #C7C7C7 dotted;
+}
+.upload div:nth-child(2) img {
+  width: 50%;
+  margin: 0.5rem auto 0.1rem;
+}
+.upload div:nth-child(2) p{
+  font-size: 0.5rem;
+  text-align: center;
+}
+
+.alert{
+  font-size: 0.55rem;
+  text-align: center;
+  height: 5rem;
+  line-height: 5rem;
+  background-color: #fff;
+}

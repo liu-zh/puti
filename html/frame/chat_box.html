@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>聊天-frame</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <style>
+        body,html{
+          background-color: #E6E7E8;
+        }
+        .left-box,
+        .right-box {
+            width: 95%;
+            margin: 0.5rem auto;
+            min-height: 2.5rem;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .right-box {
+            justify-content: flex-end;
+        }
+
+        .left-box>img,
+        .right-box>img {
+            width: 2rem;
+            height: 2rem;
+            margin: 0 0.3rem;
+            border-radius: 0.2rem;
+        }
+
+        .left,
+        .right {
+            min-height: 2rem;
+            max-width: 50%;
+            line-height: 2rem;
+            padding: 0 10px;
+            border-radius: 5px;
+        }
+        .left {
+          background-color: white !important;
+        }
+        .right {
+            background-color: #9EE559;
+        }
+
+        .icon {
+            width: 1.2rem;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body class="main">
+    <section class="main" id="main"></section>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+
+    apiready = function() {
+        let vue = new Vue({
+            el: "#main",
+            data: {
+                userMsg: api.pageParam.id
+            },
+            mounted: function() {
+                rongyun();
+                UIChatBox();
+                getLatestMessages();
+                pullRefresh();
+            }
+        });
+        // 监听发送消息
+        api.addEventListener({
+            name: 'sendMsg'
+        }, function(ret, err) {
+            addSendMsg(ret.value.msg)
+        });
+        // 监听接收消息
+        api.addEventListener({
+            name: 'receiveMsg'
+        }, function(ret, err) {
+          if (api.pageParam.id.user_id == ret.value.id) {
+            addReceMsg(ret.value.msg);
+            // 禁用通知栏
+            api.cancelNotification({id: -1});
+          }
+        });
+        // 清除消息的未读状态
+        var rong = api.require('rongCloud2');
+        rong.clearMessagesUnreadStatus({
+          conversationType: 'PRIVATE',
+          targetId: api.pageParam.id.user_id
+        }, function(ret, err) {
+          if (ret.status == "success") {
+            api.sendEvent({
+                name: 'clear'
+            });
+          }
+        })
+    };
+    // 点击对方头像查看其信息
+    function left(){
+      openWin('others_msg', true, {msg: api.pageParam.id})
+    }
+    // 点击自己头像查自己信息
+    function right(){
+      openWin('person_msg', true)
+    }
+
+</script>
+
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>个人信息</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+          body{
+
+          }
+          #header{
+            width: 100%;
+            height: 44px;
+            background-color: rgb(212,157,59);
+          }
+          .content {
+            width: 100%;
+            background-color: rgba(212,157,59,0.16);
+            padding-top: 0.3rem;
+          }
+      </style>
+  </head>
+  <body>
+    <div id="app">
+      <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-pull-left aui-btn" onclick="api.closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">个人信息</div>
+        <div class="aui-pull-right aui-btn" @click="save()">保存</div>
+      </header>
+      <div class="content">
+        <div class="aui-content">
+          <ul class="aui-list aui-list-in">
+            <li class="aui-list-item aui-list-item-middle" @click="touxiang()">
+                <div class="aui-list-item-inner aui-list-item-arrow">头像<img :src=" !imgpath ? '../image/my/morentouxiang.png' : imgpath" style="width:1.5rem; height:1.5trm;"></div>
+            </li>
+            <li class="aui-list-item aui-list-item-middle" @click="change_username()">
+                <div class="aui-list-item-inner aui-list-item-arrow">昵称<span>{{username}}</span></div>
+            </li>
+            <li class="aui-list-item aui-list-item-middle" @click="change_sex()">
+                <div class="aui-list-item-inner aui-list-item-arrow">性别<span>{{sex}}</span></div>
+            </li>
+            <li class="aui-list-item aui-list-item-middle">
+                <div class="aui-list-item-inner aui-list-item-arrow">出生日期<input readonly class="form-control" type="text" id="date-group1-2" style="width:50%; text-align: right;" v-model="birthday"></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript" src="../script/jquery.min.js"></script>
+  <script type="text/javascript" src="../script/jdate.min.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        $api.fixStatusBar($api.byId('header'));
+        var toast = new auiToast();
+        let vue = new Vue({
+          el:"#app",
+          data:{
+            imgpath:null, // 头像图片的路径
+            username: null,// 用户名
+            sex: null, //性别
+            birthday: null, // 出生日期
+            userMsg: null,
+          },
+          mounted: function(){
+            this.userinfo();
+          },
+          methods:{
+            // 选择头像
+            touxiang:function(){
+              api.actionSheet({
+                  title : '上传照片',
+                  cancelTitle : '取消',
+                  buttons : ['拍照', '手机相册']
+              }, function(ret, err) {
+                  if (ret) {
+                      if (ret.buttonIndex == 1) {
+                          api.getPicture({
+                              sourceType : 'camera',
+                              encodingType : 'jpg',
+                              mediaValue : 'pic',
+                              destinationType : 'url',
+                              allowEdit : false,
+                              quality : 100,
+                              saveToPhotoAlbum : false
+                          }, function(ret, err) {
+                            console.log(JSON.stringify(ret))
+                              if (ret.data) {
+                                vue.imgpath = ret.data;
+                                vue.saveImg(ret.data, 1);
+                              } else {
+                                  api.toast({
+                                      msg : '图像获取失败',
+                                      duration : 3000,
+                                      location : 'bottom'
+                                  });
+                              }
+                          });
+                      } else if (ret.buttonIndex == 2) {
+                          //手机相册选图片
+                          api.getPicture({
+                              sourceType : 'library',
+                              encodingType : 'png',
+                              mediaValue : 'pic',
+                              destinationType : 'url',
+                              allowEdit : true,
+                              quality : 100,
+                              preview:true,
+                              saveToPhotoAlbum : false
+                          }, function(ret, err) {
+                              if (ret.data) {
+                                vue.imgpath = ret.data;
+                                vue.saveImg(ret.data, 2);
+                              } else {
+                                  api.toast({
+                                      msg : '图像获取失败',
+                                      duration : 3000,
+                                      location : 'bottom'
+                                  });
+                              }
+                          });
+                      }
+                  }
+              });
+            },
+            // 修改用户名
+            change_username: function(){
+              var dialogBox = api.require('dialogBox');
+              dialogBox.input({
+                  // keyboardType: 'default',
+                  texts: {
+                      title: '用户名',
+                      placeholder: '请输入用户名',
+                      leftBtnTitle: '取消',
+                      rightBtnTitle: '确定'
+                  },
+                  styles: {
+                    bg: '#fff',
+                    corner: 2,
+                    w: 300,
+                    h: 240,
+                    title: {
+                        h: 60,
+                        alignment: 'center',
+                        size: 14,
+                        color: '#000',
+                        marginT:30,
+                    },
+                    input: {
+                        h: 60,
+                        y:30,
+                        marginT:15,
+                        marginLeft: 10,
+                        marginRight:10,
+                        textSize: 14,
+                        alignment: 'center',
+                        textColor: '#000'
+                    },
+                      dividingLine: {
+                          width: 0,
+                          color: '#696969'
+                      },
+                      left: {
+                          bg: 'rgba(0,0,0,0)',
+                          color: '#007FFF',
+                          size: 14
+                      },
+                      right: {
+                          bg: 'rgba(0,0,0,0)',
+                          color: '#007FFF',
+                          size: 14
+                      }
+                  }
+              }, function(ret) {
+                  if (ret.eventType == 'left') {
+                    dialogBox.close({
+                      dialogName: 'input'
+                    });
+                  }
+                  if (ret.eventType == 'right') {
+                    if (ret.text != '') {
+                        vue.username = ret.text;
+                        dialogBox.close({
+                          dialogName: 'input'
+                        });
+                    }
+                  }
+              });
+            },
+            // 选择性别
+            change_sex: function(){
+              var UIActionSelector = api.require('UIActionSelector');
+              UIActionSelector.open({
+                datas: [{name: "男"}, {name: "女"}],
+                layout: {
+                    row: 5,
+                    col: 1,
+                    height: 30,
+                    size: 14,
+                    sizeActive: 16,
+                    rowSpacing: 5,
+                    colSpacing: 10,
+                    maskBg: 'rgba(0,0,0,0.2)',
+                    bg: '#fff',
+                    color: '#888',
+                    colorActive: '#f00',
+                    colorSelected: '#f00'
+                },
+                animation: true,
+                cancel: {
+                    text: '取消',
+                    size: 14,
+                    bg: 'rgba(0,0,0,0)'
+                },
+                ok: {
+                    text: '确定',
+                    size: 14,
+                    bg: 'rgba(0,0,0,0)'
+                },
+                title: {
+                    text: '请选择性别',
+                    size: 14,
+                    h: 44,
+                    bg: '#eee',
+                    color: '#888'
+                },
+                fixedOn: api.frameName
+                }, function(ret, err) {
+                    if (ret.eventType == "ok") {
+                      vue.sex = ret.level1
+                    }
+                });
+            },
+
+            // 上传头像
+            saveImg: function(path, type){
+              api.showProgress({
+                  title: '上传中...',
+                  text: '先喝杯茶...',
+              });
+              api.ajax({
+                  url : 'http://puti.maiyatang.info/api/common/upload',
+                  method : 'post',
+                  headers:{
+                    'token': $api.getStorage('token')
+                  },
+                  data : {
+                      files : {
+                          file : path
+                      }
+                  }
+              }, function(ret, err) {
+                  api.hideProgress();
+                  if (ret.code == 1) {
+                    console.log(ret.data.url)
+                    vue.imgpath = 'http://puti.maiyatang.info' + ret.data.url;
+                    api.toast({
+                        msg : ret.msg
+                    });
+                  } else {
+                    api.toast({
+                        msg : ret.msg
+                    });
+                  }
+              });
+            },
+            // 保存个人信息
+            save: function(){
+              var sex;
+              if (vue.sex == "男") {
+                sex = '1';
+              } else {
+                sex = '-1';
+              }
+                post('user/profile', {avatar: vue.imgpath, nickname: vue.username, birthday: vue.birthday, sex: sex}).then(res=>{
+                  vue.imgpath = res.data.userinfo.avatar;
+                  api.sendEvent({
+                    name: 'userinfo'
+                  });
+                  $api.setStorage('usertx', res.data.userinfo.avatar);
+                  toast.success({ title:res.msg, duration:2000 });
+                  setTimeout(api.closeWin(), 2500)
+                });
+            },
+            // 获取个人信息
+            userinfo: function(){
+              userinfo().then(res=> {
+                vue.imgpath = res.avatar;
+                if (res.nickname != null) {
+                  vue.username = res.nickname;
+                }
+                vue.birthday = res.birthday;
+                if (res.gender == '1') {
+                  vue.sex = "男"
+                } else {
+                  vue.sex = "女"
+                }
+              });
+            },
+          }
+        });
+        // 选择出生日期
+        new Jdate({
+      				el: '#date-group1-2',
+      				format: 'YYYY-MM-DD',
+      				beginYear: 1900,
+      				endYear: 2100,
+              trigger: 'click',
+              confirm: function(date) {
+      					vue.birthday = date;
+      				},
+      	})
+      };
+  </script>
+  </html>

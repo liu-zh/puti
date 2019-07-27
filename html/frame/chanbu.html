@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>禅步_frame</title>
+      <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+      <script type="text/javascript" src="../../script/jquery.min.js"></script>
+      <style>
+          body,html{
+            width: 100%;
+            height: 100%;
+            background-image: url(../../image/chanbu_bg.png);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+          }
+          .snow{position:absolute;top:0;}
+          .snow>img {
+          	width: 1rem;
+          	height: 1rem;
+          }
+          .round{
+            width: 9.5rem;
+            margin: 0 auto;
+            position: relative;
+            top: 1rem;
+
+          }
+          .round1 {
+            width: 12rem;
+            height: 12rem;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: url(../../image/canbu/round_light.png);
+            background-size: 100% 100%;
+          }
+          .level {
+            text-align: center;
+            font-size: 0.8rem;
+            height: 1.5rem;
+            line-height: 1.5rem;
+            color: black;
+            margin-top: 1rem;
+          }
+          .steps{
+            text-align: center;
+            font-weight: bold;
+            font-size: 1rem;
+            height: 1.5rem;
+            line-height: 1.5rem;
+            color: black;
+          }
+          .round2{
+    				width: 9.5rem;
+    				height: 9rem;
+    				margin: 0rem auto;
+            border-radius: 50%;
+    				position: relative;
+    				transform: rotateZ(-43deg);
+    			}
+    			.round2>div{
+    				position: absolute;
+    				display: flex;
+    				justify-content: space-between;
+    				align-items: center;
+    				width: 100%;
+    				top: 50%;
+    			}
+    			.round2>div>span {
+    				display: inline-block;
+    				width: 15px;
+    				height: 2px;
+    				border-radius: 3px;
+    				background-color: white;
+    			}
+
+          .button{
+            margin: 0.5rem auto;
+            width: 6.5rem;
+            height: 2rem;
+            border-radius: 0.35rem;
+            background-color: #FFB900;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            line-height: 2rem;
+            font-size: 1rem;
+          }
+          .reward{
+            width: 90%;
+            font-size: 0.8rem;
+            margin: 0 auto;
+          }
+          .rank-list{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+          }
+          .rank-list .line{
+            width: 34%;
+            height: 1px;
+            background-color: #7A7A7A;
+          }
+          .rank-list .rank{
+            width: 32%;
+            height: 1.4rem;
+            border-radius: 0.7rem;
+            color: white;
+            background-color: #24242D;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+          }
+          .rank-list .rank img {
+            width: 0.7rem;
+            height: 0.8rem;
+          }
+          /*.run{
+            display: inline-block;
+    				background-color: #FFBA00;
+    				position: absolute;
+    				font-size: 0.45rem;
+    				color: white;
+    				text-align: center;
+            padding: 0 0.15rem;
+            right: 0%;
+    			}
+    			.jiantou{
+    				width: 0.4rem;
+    				height: 0.4rem;
+    				background-color: #FFBA00;
+    				transform: rotateZ(45deg) translate(-50%, -50%);
+    				position: absolute;
+    				left: 40%;
+    				bottom: -80%;
+    			}*/
+          .bushu{
+            width: 85%;
+            height: 1.5rem;
+            margin: auto;
+            font-size: 0.55rem;
+            color: #FFBA00;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+          /*.bushu span{
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+          }*/
+          .bushu_line{
+            width: 85%;
+            height: 0.35rem;
+            border-radius: 3px;
+            margin: 0 auto;
+            background-color: #DEDEDE;
+            transform: rotateZ(180deg);
+          }
+          .bushu_line1{
+            width: 0%;
+            height: 0.35rem;
+            border-radius: 3px;
+            background-color: rgba(252,184,0,1);
+          }
+          .box{
+            width: 100%;
+          }
+          .box .top{
+            width: 90%;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #8D8D8D;
+            margin: 0 auto;
+          }
+          .box .top span{
+            display: inline-block;
+            width: 25%;
+            text-align: center;
+          }
+          .box .list{
+            width: 90%;
+            height: 2.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            margin: 0 auto;
+          }
+          .box .list img{
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            margin: 0 auto;
+          }
+          .box .list span {
+            display: inline-block;
+            width: 25%;
+            text-align: center;
+          }
+          .alert{
+            width: 100%;
+            height: 2rem;
+            line-height: 2rem;
+            font-size: 0.65rem;
+            text-align: center;
+          }
+          .foxiang{
+            width: 90%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+          }
+          .fo{
+            width:2.5rem;
+            height: 2.5rem;
+            background-image: url(../../image/canbu/foxiang.png);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+          }
+          .run{
+            width:1.1rem;
+            height: 1.5rem;
+            background-image: url(../../image/canbu/run4.png);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            position: absolute;
+            right: 0%;
+          }
+
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <div class="round">
+        <div class="round1">
+          <!-- <div>
+            <p>今日步数</p>
+            <p v-text="steps"></p>
+          </div> -->
+        </div>
+        <div class="round2">
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    			<div><span></span></div>
+    		</div>
+      </div>
+      <p class="level">用户等级:{{userMsg.level || 0}}级</p>
+      <p class="steps">今日菩提籽奖励:{{num || 0}}个</p>
+      <div class="button" @click="duihuan">存入余额</div>
+      <!-- <p class="reward">每日禅步奖励</p> -->
+      <!-- <div class="run">已走{{steps}}步<div class="jiantou"></div></div> -->
+      <div class="foxiang">
+        <div class="fo"></div>
+        <div class="run"></div>
+      </div>
+      <div class="bushu_line">
+        <div class="bushu_line1"></div>
+      </div>
+      <div class="bushu">
+        <span>30000步</span>
+        <span>20000步</span>
+        <span>10000步</span>
+        <span>0步</span>
+      </div>
+      <div class="rank-list">
+        <div class="line"></div>
+        <div class="rank">
+          <img src="../../image/canbu/paobu.png">
+          <span>禅步排行</span>
+        </div>
+        <div class="line"></div>
+      </div>
+      <div class="box">
+        <div class="top">
+          <span style="text-align:left;">排名</span>
+          <span>头像</span>
+          <span>昵称</span>
+          <span style="text-align:right;">步数</span>
+        </div>
+        <div class="list" v-for="(it,index) in list">
+          <span style="text-align:left; font-weight:bold; font-size: 0.8rem;">NO.{{index + 1}}</span>
+          <span><img :src="it.avatar"></span>
+          <span v-text="it.mobile.substr(0,3)+ '****' + it.mobile.substr(7)"></span>
+          <span v-text="it.num + '步'" style="text-align:right;"></span>
+        </div>
+        <div class="alert" v-if="list.length == 0">暂无排名</div>
+      </div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript" src="../../script/vue.js"></script>
+  <script type="text/javascript" src="../../script/common.js"></script>
+  <script type="text/javascript" src="../../script/aui-toast.js"></script>
+  <script type="text/javascript" src="../../script/piaoluo.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        let vue = new Vue({
+          el:"#app",
+          data:{
+            list: [],
+            steps: api.pageParam.num,// 当天步数
+            daytime: null,// 当天时间
+            userMsg: {},// 用户信息
+            num: api.pageParam.number, // 当天兑换的菩提籽数
+          },
+          mounted: function(){
+            get('index/rank').then(res=>{
+              vue.list = res.data;
+            })
+            // 计步器函数
+            this.step_number();
+            this.userinfo();
+          },
+
+          methods:{
+            // 获取当日步数
+            step_number: function(){
+              var date = new Date();
+              var year = date.getFullYear();
+              var month = date.getMonth() + 1;
+              var day = date.getDate();
+              var sign1 = "-";
+              var sign2 = ":";
+              this.daytime = year + sign1 + month + sign1 + day;
+              // 监听步数
+              api.addEventListener({
+                name: 'chanbu'
+              }, function(ret, err) {
+                vue.steps = $api.getStorage(vue.daytime);
+                // 圆形进度条的样式(总步数暂时为30000)
+                var span = $api.domAll('.round2>div>span');
+                if (vue.steps <= 28000) {
+                  for(var i = 0; i < span.length*(vue.steps/30000); i++){
+                    span[i].style.backgroundColor = '#EEBE44';
+                  }
+                  if (vue.steps >=0 && vue.steps<=1000) {
+                    run.style.right = vue.steps/300*0.9 + '%';
+                  } else {
+                    run.style.right = vue.steps/300*0.9 -run_w + '%';
+                  }
+                  bushu_line1.style.width = vue.steps/300*0.85 + '%';
+                } else {
+                  for(var i = 0; i < span.length*(30000/30000); i++){
+                    span[i].style.backgroundColor = '#EEBE44';
+                  }
+                  run.style.right = 28000/300*0.9 -run_w + '%';
+                  bushu_line1.style.width = 30000/300*85 + '%';
+                }
+                if (vue.steps >= 0 && vue.steps < 10000) {
+                  run.style.opacity = '0.33'
+                }
+                if (vue.steps >= 10000 && vue.steps < 20000) {
+                  run.style.opacity = '0.66'
+                }
+                if (vue.steps >= 20000 && vue.steps < 28000) {
+                  run.style.opacity = '1'
+                }
+
+              });
+            },
+            //兑换禅步
+            duihuan: function(){
+              post('index/exchange', {steps: vue.steps}).then( res => {
+                vue.num = res.putizi;
+                api.sendEvent({
+                  name: 'userinfo'
+                });
+                vue.userinfo();
+                piaoluo();
+                setTimeout(function(){
+                  clearInterval(timers)
+                },1500);
+                api.toast({
+                    msg: res.msg,
+                    duration: 2000,
+                    location: 'bottom'
+                });
+
+              });
+            },
+            // 获取个人信息
+            userinfo: function(){
+              userinfo().then( res => {
+                vue.userMsg = res;
+              });
+            },
+          },
+        })
+        var round = $api.domAll('.round2>div');
+        for(var i = 0; i < round.length; i++){
+          round[i].style.transform = 'rotateZ('+ i*6 + 'deg)';
+        }
+        // 圆形进度条的样式(总步数暂时为30000)
+        var span = $api.domAll('.round2>div>span');
+        for(var i = 0; i < span.length*(api.pageParam.num/30000); i++){
+          span[i].style.backgroundColor = '#EEBE44';
+        }
+        var run = $api.dom('.run');
+        var progress = $api.dom('.progress>div');
+        var bushu_line1 = $api.dom('.bushu_line1');
+        var run_w = run.offsetWidth/api.winWidth * 50;
+        if (api.pageParam.num > 28000) {
+          api.pageParam.num=28000;
+        }
+        if (api.pageParam.num >=0 && api.pageParam.num<=1000) {
+          run.style.right = api.pageParam.num/300*0.9 + '%';
+        } else {
+          run.style.right = api.pageParam.num/300*0.9 -run_w + '%';
+        }
+        bushu_line1.style.width = api.pageParam.num/300*0.85 + '%';
+        if (api.pageParam.num >= 0 && api.pageParam.num < 10000) {
+          run.style.opacity = '0.33'
+        }
+        if (api.pageParam.num >= 10000 && api.pageParam.num < 20000) {
+          run.style.opacity = '0.66'
+        }
+        if (api.pageParam.num >= 20000 && api.pageParam.num <= 28000) {
+          run.style.opacity = '1'
+        }
+      };
+  </script>
+  </html>

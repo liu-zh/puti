@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>消息-frame-通知</title>
+      <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+      <style>
+          body{
+            background-color: #fff;
+          }
+          .alert{
+            font-size: 0.55rem;
+            text-align: center;
+            height: 5rem;
+            line-height: 5rem;
+            background-color: #fff;
+          }
+        .aui-list .aui-dot{
+            right: 5%;
+          }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <div class="list">
+          <ul class="aui-list aui-media-list">
+            <li class="aui-list-item aui-list-item-arrow" v-for="it in list" @click="look(it)">
+              <div class="aui-dot" v-if="!it.readed"></div>
+              <div class="aui-media-list-item-inner">
+                <div class="aui-list-item-inner">
+                  <div class="aui-list-item-text">
+                    <div class="aui-list-item-title" v-text="it.title"></div>
+                    <div class="aui-list-item-right" v-text="formatDateTime(it.createtime * 1000)"></div>
+                  </div>
+                  <div class="aui-list-item-text aui-ellipsis-2" v-html="it.content"></div>
+                </div>
+              </div>
+            </li>
+          </ul>
+      </div>
+      <div class="alert" v-if="list.length == 0">暂时没有通知</div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript" src="../../script/vue.js"></script>
+  <script type="text/javascript" src="../../script/common.js"></script>
+  <script type="text/javascript" src="../../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        let vue = new Vue({
+          el:"#app",
+          data:{
+            list:[]
+          },
+          methods:{
+            // 获取通知信息
+            infrom: function(){
+              get('about/inform').then(res=>{
+                vue.list = res.data;
+              })
+            },
+            // 查看通知详情
+            look: function(it){
+              if (it.readed == 0) {
+                post('about/inform', {id: it.id}).then(res=>{
+                  this.infrom();
+                  api.sendEvent({
+                      name: 'tongzhi'
+                  });
+                })
+              }
+              openWin('notice', false, {data: it, type: 1});
+            },
+            // 日期
+            formatDateTime: function(inputTime){
+              var date = new Date(inputTime);
+              var date1 = new Date();
+      				var y = date.getFullYear();
+      				var m = date.getMonth() + 1;
+      				m = m < 10 ? ('0' + m) : m;
+      				var d = date.getDate();
+              var d1 = date1.getDate();
+      				d = d < 10 ? ('0' + d) : d;
+              d1 = d1 < 10 ? ('0' + d1) : d1;
+      				var h = date.getHours();
+      				h = h < 10 ? ('0' + h) : h;
+      				var minute = date.getMinutes();
+      				var second = date.getSeconds();
+      				minute = minute < 10 ? ('0' + minute) : minute;
+      				second = second < 10 ? ('0' + second) : second;
+              if (d1 == d) {
+                return h + ':' + minute;
+              } else if (d1 - d == 1) {
+                return '昨天'
+              }else{
+                return y + '/' + m + '/' + d;
+              }
+            },
+          },
+          mounted: function(){
+            this.infrom();
+          }
+        });
+
+      };
+  </script>
+  </html>

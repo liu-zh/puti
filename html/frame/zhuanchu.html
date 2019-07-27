@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>转出-frame</title>
+      <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+      <style>
+          body,html{
+            height: 100%;
+          }
+          #app{
+            background-color: rgba(212,157,59,0.16);
+            height: 100%;
+          }
+          .user{
+            width: 100%;
+            padding-top: 0.5rem;
+          }
+          .user-msg {
+            width: 92%;
+            height: 2.5rem;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+          }
+          .user-msg input{
+            width: 80%;
+            margin-left: 0.5rem;
+          }
+          .number {
+            width: 92%;
+            height: 2.5rem;
+            margin: 0.5rem auto 0;
+            background-color: white;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+          }
+          .number>p:nth-child(1){
+            margin: 0 0.4rem;
+          }
+          .number>input {
+            width: 60%;
+          }
+          .button{
+            width: 75%;
+            height: 2.5rem;
+            background:linear-gradient(73deg,rgba(234,214,159,1),rgba(248,193,95,1));
+            margin: 3rem auto 1rem;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            line-height: 2.5rem;
+            font-size: 18px;
+          }
+          .bottom {
+            width: 92%;
+            height: 6rem;
+            background-color: #fff;
+            margin: 0 auto;
+          }
+          .bottom .title {
+            width: 92%;
+            height: 3rem;
+            line-height: 3rem;
+            font-size: 18px;
+            margin: 0 auto;
+          }
+          .bottom .details {
+            width: 80%;
+            margin: 0 auto;
+            font-size: 15px;
+          }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <section class="user">
+        <div class="user-msg">
+          <input type="text" v-model="name" placeholder="请输入手机号">
+        </div>
+        <div class="number">
+          <p>转出数量:</p>
+          <input type="number" v-model="num">
+        </div>
+      </section>
+      <div class="button" @click="output()">确认</div>
+      <div class="bottom">
+        <div class="title">转出说明</div>
+        <div class="details">
+          <p>{{msg.explain}}</p>
+        </div>
+      </div>
+
+    </section>
+  </body>
+  <script type="text/javascript" src="../../script/api.js"></script>
+  <script type="text/javascript" src="../../script/vue.js"></script>
+  <script type="text/javascript" src="../../script/common.js"></script>
+  <script type="text/javascript" src="../../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        var toast = new auiToast();
+        let vue = new Vue({
+          el:"#app",
+          data:{num:0, name:null, msg: {}},
+          methods:{
+            output: function(){
+              post('user/output', {account: vue.name, num: vue.num}).then(res=>{
+                api.sendEvent({
+                  name: 'userinfo',
+                });
+                api.toast({
+                    msg: res.msg,
+                    duration: 2000,
+                    location: 'bottom'
+                });
+                setTimeout(function(){api.closeWin()}, 2000)
+              });
+            }
+          },
+          mounted:function(){}
+        });
+        get('guamai/index').then(res=>{
+          vue.msg = res.data;
+        });
+      };
+  </script>
+  </html>

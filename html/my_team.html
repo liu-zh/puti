@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>我的团队</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+      <style>
+          body{
+            background-color: #fff;
+          }
+          #header{
+            width: 100%;
+            height: 44px;
+            background-color: rgb(212,157,59);
+            position: fixed;
+            left: 0;
+            top: 0;
+          }
+          .box {
+            width: 96%;
+            margin: 4rem auto 0;
+            border-radius: 10px;
+            background-color: #F8EFDF;
+            display: flex;
+            height: 2.2rem;
+            line-height: 2.2rem;
+          }
+          .box-left, .box-right {
+            text-align: center;
+            font-size: 16px;
+            color: #0F0E0D;
+          }
+          .box-left{
+            width: 60%;
+          }
+          .box-right{
+            width: 40%;
+          }
+          .message {
+            width:100%;
+            display: flex;
+            height: 2.3rem;
+            line-height: 2.3rem;
+          }
+          .message>div {
+            text-align: center;
+            font-size: 14px;
+            color: #969696;
+          }
+          .message>div:nth-child(1) {
+            width: 60%;
+          }
+          .message>div:nth-child(2) {
+            width: 40%;
+          }
+          .details {
+            width:100%;
+            display: flex;
+            align-items: center;
+            height: 2rem;
+          }
+          .details>div{
+            text-align: center;
+            color: #0C0C0C;
+          }
+          .details>div:nth-child(1) {
+            width: 60%;
+          }
+          .details>div:nth-child(2) {
+            width: 40%;
+          }
+          .details-left span:nth-child(1){
+            background-color: #EED8B1;
+            border-radius: 50%;
+            min-width: 1rem;
+            height: 1rem;
+          }
+          .details-left span:nth-child(2){
+            display: inline-block;
+            margin-left: 0.3rem;
+            margin-right: 0.5rem;
+          }
+          .details-left span:nth-child(3){
+            background-color: #EED8B1;
+            border-radius: 5px;
+            padding: 0 0.2rem;
+            font-size: 0.65rem;
+          }
+      </style>
+  </head>
+  <body>
+    <section id="app">
+      <header class="aui-bar aui-bar-nav" id="header">
+        <a class="aui-pull-left aui-btn" onclick="api.closeWin()">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">我的团队</div>
+      </header>
+      <div class="box">
+        <div class="box-left">代理等级</div>
+        <div class="box-right">团队人数{{team.num}}</div>
+      </div>
+      <div class="message">
+        <div>用户信息</div>
+        <div>团队业绩</div>
+      </div>
+      <div class="details" v-for="(item, index) in team.list">
+        <div class="details-left">
+          <span v-text="index + 1"></span>
+          <span v-text="item.mobile.substr(0,3)+ '****' + item.mobile.substr(7)"></span>
+          <span v-text="'普通会员'" v-if="item.level == 1"></span>
+          <span v-text="'省级代理'" v-if="item.level == 2"></span>
+          <span v-text="'创始人'" v-if="item.level == 3"></span>
+        </div>
+        <div v-text="item.steps + '步'"></div>
+      </div>
+    </section>
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/vue.js"></script>
+  <script type="text/javascript" src="../script/common.js"></script>
+  <script type="text/javascript" src="../script/aui-toast.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        $api.fixStatusBar($api.byId("header"));
+        let vue = new Vue({
+          el:"#app",
+          data:{
+            team: {}
+          },
+          mounted: function(){
+            post('user/team').then(function(res){
+              vue.team = res.data;
+              console.log(JSON.stringify(vue.team));
+            })
+          },
+        });
+      };
+  </script>
+  </html>
